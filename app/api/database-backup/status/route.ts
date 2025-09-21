@@ -70,8 +70,8 @@ export async function GET() {
       nextBackup = new Date().toISOString()
     }
 
-    // Otomatik yedekleme durumu (environment variable ile kontrol)
-    const isActive = !!process.env.DATABASE_BACKUP_ENABLED
+    // Otomatik yedekleme durumu - Hep aktif
+    const isActive = true
 
     const status = {
       lastBackup,

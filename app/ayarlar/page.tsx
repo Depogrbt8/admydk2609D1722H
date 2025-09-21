@@ -3,7 +3,6 @@ import { useState } from 'react'
 import Sidebar from '../components/layout/Sidebar'
 import Header from '../components/layout/Header'
 import ApiModal from '../components/settings/ApiModal'
-import BackupModal from '../components/settings/BackupModal'
 import CountryRestrictionModal from '../components/settings/CountryRestrictionModal'
 import SiteSettingsModal from '../components/settings/SiteSettingsModal'
 import SecurityModal from '../components/settings/SecurityModal'
@@ -15,7 +14,6 @@ import SeoModal from '../components/settings/SeoModal'
 export default function AyarlarPage() {
   const [activeTab, setActiveTab] = useState('ayarlar')
   const [isApiModalOpen, setIsApiModalOpen] = useState(false)
-  const [isBackupModalOpen, setIsBackupModalOpen] = useState(false)
   const [isCountryModalOpen, setIsCountryModalOpen] = useState(false)
   const [isSiteModalOpen, setIsSiteModalOpen] = useState(false)
   const [isSecurityModalOpen, setIsSecurityModalOpen] = useState(false)
@@ -101,14 +99,11 @@ export default function AyarlarPage() {
                 <p className="text-sm text-gray-600">API ayarlarını yönetin</p>
               </button>
 
-              {/* Backup Butonu */}
-              <button
-                onClick={() => setIsBackupModalOpen(true)}
-                className="bg-white rounded-lg border border-gray-200 p-6 hover:bg-gray-50 transition-colors"
-              >
+              {/* Backup Butonu - Sistem sayfasına taşındı */}
+              <div className="bg-white rounded-lg border border-gray-200 p-6 opacity-50">
                 <h2 className="text-lg font-medium text-gray-900 mb-2">Backup</h2>
-                <p className="text-sm text-gray-600">Backup ayarlarını yönetin</p>
-              </button>
+                <p className="text-sm text-gray-600">Yedekleme sistemi Sistem sayfasına taşındı</p>
+              </div>
 
               {/* Ülke Kısıtlaması Butonu */}
               <button
@@ -136,10 +131,6 @@ export default function AyarlarPage() {
       <ApiModal 
         isOpen={isApiModalOpen} 
         onClose={() => setIsApiModalOpen(false)} 
-      />
-      <BackupModal 
-        isOpen={isBackupModalOpen} 
-        onClose={() => setIsBackupModalOpen(false)} 
       />
       <CountryRestrictionModal 
         isOpen={isCountryModalOpen} 

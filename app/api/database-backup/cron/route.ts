@@ -10,14 +10,7 @@ export async function GET(request: NextRequest) {
   try {
     console.log('🤖 Otomatik database backup tetiklendi')
     
-    // Environment variable kontrolü
-    if (!process.env.DATABASE_BACKUP_ENABLED) {
-      console.log('⚠️ Otomatik backup pasif, atlanıyor')
-      return NextResponse.json({
-        success: false,
-        message: 'Otomatik backup pasif - DATABASE_BACKUP_ENABLED environment variable eksik'
-      })
-    }
+    // Sistem hep aktif - environment variable kontrolü yok
     
     const backupFile = path.join(process.cwd(), 'backups', 'database-backup.json')
     const backupDir = path.join(process.cwd(), 'backups')

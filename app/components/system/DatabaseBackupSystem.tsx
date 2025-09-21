@@ -148,28 +148,18 @@ export default function DatabaseBackupSystem() {
         </div>
       )}
 
-      {/* Ana Kontrol Butonu */}
+      {/* Sistem Durumu */}
       <div className="flex justify-center mb-6">
-        <button
-          onClick={toggleAutoBackup}
-          disabled={isToggling}
-          className={`px-8 py-3 rounded-lg font-medium text-lg ${
-            isToggling
-              ? 'bg-gray-400 cursor-not-allowed'
-              : status?.isActive
-              ? 'bg-red-600 hover:bg-red-700 text-white'
-              : 'bg-green-600 hover:bg-green-700 text-white'
-          }`}
-        >
-          {isToggling ? (
-            <div className="flex items-center">
-              <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
-              İşleniyor...
-            </div>
-          ) : (
-            status?.isActive ? 'Otomatik Yedeklemeyi Durdur' : 'Otomatik Yedeklemeyi Başlat'
-          )}
-        </button>
+        <div className={`px-8 py-3 rounded-lg font-medium text-lg ${
+          status?.isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+        }`}>
+          <div className="flex items-center">
+            <div className={`w-3 h-3 rounded-full mr-3 ${
+              status?.isActive ? 'bg-green-500' : 'bg-red-500'
+            }`}></div>
+            {status?.isActive ? 'Otomatik Yedekleme Aktif' : 'Otomatik Yedekleme Pasif'}
+          </div>
+        </div>
       </div>
 
     </div>
