@@ -172,40 +172,6 @@ export default function DatabaseBackupSystem() {
         </button>
       </div>
 
-      {/* Sistem Bilgileri */}
-      <div className="space-y-4">
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-          <h4 className="font-medium text-blue-900 mb-2">🔄 Incremental Backup Sistemi</h4>
-          <ul className="text-sm text-blue-800 space-y-1">
-            <li>• <strong>Sadece Database:</strong> Kullanıcılar, rezervasyonlar, ödemeler, kampanyalar</li>
-            <li>• <strong>Akıllı Güncelleme:</strong> Her seferinde yeni dosya değil, mevcut yedek üzerine ekleme</li>
-            <li>• <strong>Değişiklik Takibi:</strong> Yeni eklenenler, güncellenenler, silinenler ayrı ayrı</li>
-            <li>• <strong>Sıklık:</strong> Her 2 saatte bir otomatik yedekleme</li>
-            <li>• <strong>Tek Dosya:</strong> Tüm yedekler tek dosyada, sürekli güncellenir</li>
-          </ul>
-        </div>
-
-        <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-          <h4 className="font-medium text-green-900 mb-2">⚡ Avantajlar</h4>
-          <ul className="text-sm text-green-800 space-y-1">
-            <li>• <strong>Disk Tasarrufu:</strong> Her seferinde yeni dosya oluşturmaz</li>
-            <li>• <strong>Hızlı İşlem:</strong> Sadece değişiklikleri işler</li>
-            <li>• <strong>Tam Geçmiş:</strong> Tüm değişikliklerin geçmişi korunur</li>
-            <li>• <strong>Kolay Geri Yükleme:</strong> Tek dosyadan tam kurtarma</li>
-            <li>• <strong>Verimli:</strong> Sistem kodları zaten mevcut, sadece veri kurtarma</li>
-          </ul>
-        </div>
-
-        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-          <h4 className="font-medium text-yellow-900 mb-2">⚠️ Önemli Notlar</h4>
-          <ul className="text-sm text-yellow-800 space-y-1">
-            <li>• Otomatik yedekleme Vercel Cron Jobs ile çalışır</li>
-            <li>• Environment variable: DATABASE_BACKUP_ENABLED=true</li>
-            <li>• Cron schedule: 0 */2 * * * (Her 2 saatte bir)</li>
-            <li>• Yedekler /backups/database-backup.json dosyasında saklanır</li>
-          </ul>
-        </div>
-      </div>
     </div>
   )
 }
