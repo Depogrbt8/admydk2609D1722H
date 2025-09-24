@@ -10,7 +10,19 @@ const rateLimit = createRateLimit({ windowMs: 60 * 1000, maxRequests: 20 })
 export async function POST(request: NextRequest) {
   // Rate limit
   const rl = await rateLimit(request)
-  if ((rl as any)?.status === 429) return rl as NextResponse
+  if ((rl as any)?.status === 429) {
+    try {
+      await prisma.systemLog.create({
+        data: {
+          level: 'warn',
+          message: 'Rate limit blocked',
+          source: 'rate_limit_block',
+          metadata: JSON.stringify({ path: '/api/database-backup/webhook', ip: request.headers.get('x-forwarded-for') || request.ip || 'unknown' })
+        }
+      })
+    } catch {}
+    return rl as NextResponse
+  }
   const secret = process.env.GITHUB_WEBHOOK_SECRET || ''
   const githubEvent = request.headers.get('x-github-event') || ''
   const signature = request.headers.get('x-hub-signature-256') || ''
@@ -32,6 +44,16 @@ export async function POST(request: NextRequest) {
     const digest = 'sha256=' + hmac.update(rawBody).digest('hex')
     const isValid = crypto.timingSafeEqual(Buffer.from(digest), Buffer.from(signature || 'sha256='))
     if (!isValid) {
+      try {
+        await prisma.systemLog.create({
+          data: {
+            level: 'warn',
+            message: 'Invalid webhook signature',
+            source: 'webhook_invalid_signature',
+            metadata: JSON.stringify({ path: '/api/database-backup/webhook', ip: githubIp })
+          }
+        })
+      } catch {}
       return NextResponse.json({ success: false, error: 'Invalid signature' }, { status: 401 })
     }
 

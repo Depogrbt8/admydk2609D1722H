@@ -3,6 +3,7 @@ import { writeFile, mkdir } from 'fs/promises'
 import { join } from 'path'
 import { existsSync } from 'fs'
 import { createRateLimit } from '@/lib/rateLimit'
+import { prisma } from '@/app/lib/prisma'
 import config from '@/app/lib/config'
 
 // CORS middleware
@@ -24,7 +25,19 @@ const rateLimit = createRateLimit({ windowMs: 5 * 60 * 1000, maxRequests: 20 })
 export async function POST(request: NextRequest) {
   // Rate limit
   const rl = await rateLimit(request)
-  if ((rl as any)?.status === 429) return rl as NextResponse
+  if ((rl as any)?.status === 429) {
+    try {
+      await prisma.systemLog.create({
+        data: {
+          level: 'warn',
+          message: 'Rate limit blocked',
+          source: 'rate_limit_block',
+          metadata: JSON.stringify({ path: '/api/upload', ip: request.headers.get('x-forwarded-for') || 'unknown' })
+        }
+      })
+    } catch {}
+    return rl as NextResponse
+  }
 
   try {
     const data = await request.formData()

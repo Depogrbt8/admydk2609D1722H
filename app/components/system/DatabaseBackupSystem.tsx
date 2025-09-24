@@ -20,10 +20,12 @@ export default function DatabaseBackupSystem() {
   const [isLoading, setIsLoading] = useState(true)
   const [isToggling, setIsToggling] = useState(false)
   const [sources, setSources] = useState<Array<{ key: string; title: string; subtitle: string; active: boolean; pulledInfo: string }>>([])
+  const [secLine, setSecLine] = useState<string>("")
 
   useEffect(() => {
     fetchBackupStatus()
     fetchSources()
+    fetchSecurityLine()
   }, [])
 
   const fetchBackupStatus = async () => {
@@ -49,6 +51,22 @@ export default function DatabaseBackupSystem() {
     } catch (e) {
       // ignore visual section errors
     }
+  }
+
+  const fetchSecurityLine = async () => {
+    try {
+      const res = await fetch('/api/system/security/status')
+      const json = await res.json()
+      if (json.success) {
+        const d = json.data
+        // 4 metrik tek satır: aktif saldırılar, engellenen istekler, rate-limit blokları, son tehdit zamanı
+        const activeAttacks = d?.realTimeThreats?.activeAttacks ?? 0
+        const blockedRequests = d?.realTimeThreats?.blockedRequests ?? 0
+        const rateBlocked = d?.rateLimitingStatus?.blockedRequests ?? 0
+        const lastThreat = d?.realTimeThreats?.lastThreat || '—'
+        setSecLine(`Aktif: ${activeAttacks} • Blok: ${blockedRequests} • RL: ${rateBlocked} • Son: ${lastThreat}`)
+      }
+    } catch {}
   }
 
   const toggleAutoBackup = async () => {
@@ -112,8 +130,10 @@ export default function DatabaseBackupSystem() {
           ))}
         </div>
       )}
-
-
+      {/* Güvenlik Durumu - minimalist tek satır */}
+      {secLine && (
+        <div className="mt-2 text-xs text-gray-700 truncate">🔒 {secLine}</div>
+      )}
     </div>
   )
 }
