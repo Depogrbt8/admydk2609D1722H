@@ -161,11 +161,20 @@ async function getLastBackupDate(): Promise<string> {
     }
 
     // En son yazılan backup dosyasını bul
-    const latestBackup = backupFiles.sort((a, b) => 
-      new Date(b.updated_at || b.created_at).getTime() - new Date(a.updated_at || a.created_at).getTime()
-    )[0]
+    const latestBackup = backupFiles.sort((a, b) => {
+      const dateA = new Date(a.updated_at || a.created_at).getTime()
+      const dateB = new Date(b.updated_at || b.created_at).getTime()
+      return dateB - dateA
+    })[0]
 
-    const backupDate = new Date(latestBackup.updated_at || latestBackup.created_at)
+    // Tarih formatını düzelt
+    const dateString = latestBackup.updated_at || latestBackup.created_at
+    const backupDate = new Date(dateString)
+    
+    // Geçersiz tarih kontrolü
+    if (isNaN(backupDate.getTime())) {
+      return 'Tarih hatası'
+    }
     
     // Türkçe tarih formatı
     const now = new Date()
