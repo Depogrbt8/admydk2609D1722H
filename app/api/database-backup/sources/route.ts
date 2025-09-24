@@ -167,7 +167,47 @@ async function getLastBackupDate(): Promise<string> {
       return dateB - dateA
     })[0]
 
-    // Tarih formatını düzelt
+    // Backup dosyasının içeriğini oku
+    try {
+      const fileResponse = await fetch(latestBackup.download_url, {
+        headers: {
+          'Authorization': `token ${githubToken}`,
+          'Accept': 'application/vnd.github.v3+json'
+        }
+      })
+
+      if (fileResponse.ok) {
+        const fileContent = await fileResponse.json()
+        
+        // Backup dosyasından tarih bilgisini çek
+        if (fileContent.metadata && fileContent.metadata.timestamp) {
+          const backupDate = new Date(fileContent.metadata.timestamp)
+          
+          // Geçersiz tarih kontrolü
+          if (!isNaN(backupDate.getTime())) {
+            const now = new Date()
+            const diffMs = now.getTime() - backupDate.getTime()
+            const diffMinutes = Math.floor(diffMs / (1000 * 60))
+            const diffHours = Math.floor(diffMs / (1000 * 60 * 60))
+            const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24))
+
+            if (diffMinutes < 60) {
+              return `${diffMinutes} dk önce`
+            } else if (diffHours < 24) {
+              return `${diffHours} saat önce`
+            } else if (diffDays < 7) {
+              return `${diffDays} gün önce`
+            } else {
+              return backupDate.toLocaleDateString('tr-TR')
+            }
+          }
+        }
+      }
+    } catch (error) {
+      console.log('Backup dosyası içeriği okunamadı:', error)
+    }
+
+    // Fallback: Dosya tarihini kullan
     const dateString = latestBackup.updated_at || latestBackup.created_at
     const backupDate = new Date(dateString)
     
