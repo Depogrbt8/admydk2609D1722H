@@ -22,32 +22,32 @@ export async function GET() {
 
     const sources: SourceStatus[] = [
       {
-        key: 'github-2h',
-        title: 'Github 2 saat',
+        key: 'github-hourly',
+        title: 'GitHub Her Saat',
         subtitle: 'Aktif',
         active: true,
         pulledInfo: pulled,
       },
       {
-        key: 'gitlab-daily',
-        title: 'Gitlab Gunluk',
+        key: 'github-repo',
+        title: 'adminhersaat',
         subtitle: 'Aktif',
         active: true,
-        pulledInfo: pulled,
+        pulledInfo: 'grbt8yedek',
       },
       {
-        key: 'github-6h',
-        title: 'Github 6 saat',
+        key: 'backup-type',
+        title: 'Kapsamlı Backup',
         subtitle: 'Aktif',
         active: true,
-        pulledInfo: pulled,
+        pulledInfo: 'DB+Schema+Users',
       },
       {
-        key: 'future',
-        title: 'Sonra eklenecek',
-        subtitle: 'Pasif',
-        active: false,
-        pulledInfo: '! cekilen veri !',
+        key: 'cron-status',
+        title: 'Vercel Cron',
+        subtitle: 'Aktif',
+        active: true,
+        pulledInfo: '0 * * * *',
       },
     ]
 
