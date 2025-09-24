@@ -124,7 +124,7 @@ async function checkAllStatuses() {
   return statusChecks
 }
 
-// GitHub repo'dan en son backup tarihini çeken fonksiyon
+// GitHub repo'dan en son backup dosyasının tarihini çeken fonksiyon
 async function getLastBackupDate(): Promise<string> {
   try {
     const githubToken = process.env.GITHUB_BACKUP_TOKEN
@@ -132,8 +132,8 @@ async function getLastBackupDate(): Promise<string> {
       return 'Token yok'
     }
 
-    // GitHub API'den en son commit'i çek
-    const response = await fetch('https://api.github.com/repos/grbt8yedek/adminhersaat/commits?per_page=1', {
+    // GitHub API'den backups klasöründeki dosyaları çek
+    const response = await fetch('https://api.github.com/repos/grbt8yedek/adminhersaat/contents/backups', {
       headers: {
         'Authorization': `token ${githubToken}`,
         'Accept': 'application/vnd.github.v3+json'
@@ -144,17 +144,32 @@ async function getLastBackupDate(): Promise<string> {
       return 'API Hatası'
     }
 
-    const commits = await response.json()
-    if (commits.length === 0) {
-      return 'Commit yok'
+    const files = await response.json()
+    if (!Array.isArray(files) || files.length === 0) {
+      return 'Backup yok'
     }
 
-    const lastCommit = commits[0]
-    const commitDate = new Date(lastCommit.commit.committer.date)
+    // Backup dosyalarını filtrele (admin_backup_ ile başlayanlar)
+    const backupFiles = files.filter(file => 
+      file.type === 'file' && 
+      file.name.startsWith('admin_backup_') && 
+      file.name.endsWith('.json')
+    )
+
+    if (backupFiles.length === 0) {
+      return 'Backup dosyası yok'
+    }
+
+    // En son yazılan backup dosyasını bul
+    const latestBackup = backupFiles.sort((a, b) => 
+      new Date(b.updated_at || b.created_at).getTime() - new Date(a.updated_at || a.created_at).getTime()
+    )[0]
+
+    const backupDate = new Date(latestBackup.updated_at || latestBackup.created_at)
     
     // Türkçe tarih formatı
     const now = new Date()
-    const diffMs = now.getTime() - commitDate.getTime()
+    const diffMs = now.getTime() - backupDate.getTime()
     const diffMinutes = Math.floor(diffMs / (1000 * 60))
     const diffHours = Math.floor(diffMs / (1000 * 60 * 60))
     const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24))
@@ -166,11 +181,11 @@ async function getLastBackupDate(): Promise<string> {
     } else if (diffDays < 7) {
       return `${diffDays} gün önce`
     } else {
-      return commitDate.toLocaleDateString('tr-TR')
+      return backupDate.toLocaleDateString('tr-TR')
     }
 
   } catch (error) {
-    console.error('GitHub commit tarihi alınamadı:', error)
+    console.error('GitHub backup dosyası tarihi alınamadı:', error)
     return 'Hata'
   }
 }
