@@ -1,9 +1,11 @@
 'use client'
 import { useState, useEffect } from 'react'
+import { AlertTriangle } from 'lucide-react'
 
 export default function Header() {
   const [showAnnouncementPopup, setShowAnnouncementPopup] = useState(false)
   const [announcementCount, setAnnouncementCount] = useState(0) // Duyuru sayısı
+  const [systemAlerts, setSystemAlerts] = useState(0) // Sistem uyarı sayısı
   
   // Kullanıcı rolünü localStorage'dan al (varsayılan: normal admin)
   const [userRole, setUserRole] = useState('admin')
@@ -19,6 +21,80 @@ export default function Header() {
     if (count) {
       setAnnouncementCount(parseInt(count))
     }
+  }, [])
+
+  // Sistem uyarılarını kontrol et
+  useEffect(() => {
+    const checkSystemAlerts = async () => {
+      try {
+        const risks = []
+
+        // Güvenlik durumu kontrolü
+        const securityRes = await fetch('/api/system/security/status')
+        if (securityRes.ok) {
+          const security = await securityRes.json()
+          const data = security.data
+
+          if (data?.realTimeThreats?.activeAttacks > 10) risks.push('security_attack')
+          if (data?.rateLimitingStatus?.blockedRequests > 100) risks.push('security_rate')
+          if (data?.overallScore < 70) risks.push('security_score')
+        }
+
+        // Admin Panel durumu kontrolü
+        const [adminMetricsRes, adminHealthRes] = await Promise.all([
+          fetch('/api/system/real-metrics'),
+          fetch('/api/system/health-score')
+        ])
+
+        if (adminMetricsRes.ok && adminHealthRes.ok) {
+          const metrics = await adminMetricsRes.json()
+          const health = await adminHealthRes.json()
+
+          if (metrics.success && health.success) {
+            if (metrics.data.cpu.usage > 80) risks.push('admin_cpu')
+            if (metrics.data.memory.usage > 90) risks.push('admin_memory')
+            if (metrics.data.disk.usage > 85) risks.push('admin_disk')
+            if (health.data.overall.score < 60) risks.push('admin_health')
+          }
+        }
+
+        // Ana Site durumu kontrolü
+        try {
+          const [mainStatusRes, mainHealthRes] = await Promise.all([
+            fetch('https://anasite.grbt8.store/api/system/status'),
+            fetch('https://anasite.grbt8.store/api/system/health-score')
+          ])
+
+          if (mainStatusRes.ok && mainHealthRes.ok) {
+            const mainStatus = await mainStatusRes.json()
+            const mainHealth = await mainHealthRes.json()
+
+            if (mainStatus.success && mainHealth.success) {
+              if (mainHealth.data.metrics.cpuUsage > 80) risks.push('main_cpu')
+              if (mainHealth.data.metrics.memoryUsage > 90) risks.push('main_memory')
+              if (mainHealth.data.metrics.loadAverage > 2.5) risks.push('main_load')
+              if (mainHealth.data.score < 60) risks.push('main_health')
+              if (mainStatus.data.database.status !== 'connected') risks.push('main_db')
+            }
+          } else {
+            risks.push('main_offline')
+          }
+        } catch {
+          risks.push('main_offline')
+        }
+
+        setSystemAlerts(risks.length)
+      } catch (error) {
+        console.error('Sistem uyarı kontrolü hatası:', error)
+      }
+    }
+
+    checkSystemAlerts()
+    
+    // Her 60 saniyede bir kontrol et
+    const interval = setInterval(checkSystemAlerts, 60000)
+    
+    return () => clearInterval(interval)
   }, [])
 
   // Duyuru popup'ı açıldığında sayıyı sıfırla
@@ -50,6 +126,14 @@ export default function Header() {
         >
           Duyuru: {announcementCount}
         </button>
+        
+        {/* Sistem Uyarıları */}
+        {systemAlerts > 0 && (
+          <div className="flex items-center ml-4 px-2 py-1 bg-red-100 text-red-800 rounded-lg text-sm">
+            <AlertTriangle className="h-4 w-4 mr-1" />
+            <span>Uyarı: {systemAlerts}</span>
+          </div>
+        )}
       </div>
 
       {/* Duyuru Popup */}
