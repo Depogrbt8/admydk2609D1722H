@@ -19,9 +19,11 @@ export default function DatabaseBackupSystem() {
   const [status, setStatus] = useState<BackupStatus | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [isToggling, setIsToggling] = useState(false)
+  const [sources, setSources] = useState<Array<{ key: string; title: string; subtitle: string; active: boolean; pulledInfo: string }>>([])
 
   useEffect(() => {
     fetchBackupStatus()
+    fetchSources()
   }, [])
 
   const fetchBackupStatus = async () => {
@@ -36,6 +38,16 @@ export default function DatabaseBackupSystem() {
       console.error('Yedekleme durumu alınamadı:', error)
     } finally {
       setIsLoading(false)
+    }
+  }
+
+  const fetchSources = async () => {
+    try {
+      const res = await fetch('/api/database-backup/sources')
+      const data = await res.json()
+      if (data.success) setSources(data.data)
+    } catch (e) {
+      // ignore visual section errors
     }
   }
 
@@ -87,6 +99,19 @@ export default function DatabaseBackupSystem() {
           </span>
         </div>
       </div>
+
+      {/* Kaynak Kartları (Eski tasarıma uygun gri oval kutular) */}
+      {sources?.length > 0 && (
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 mb-6">
+          {sources.map((s) => (
+            <div key={s.key} className="rounded-3xl bg-gray-200 px-6 py-5 text-center shadow-sm">
+              <div className={`text-lg font-semibold ${s.active ? 'text-green-600' : 'text-red-500'}`}>{s.active ? 'Aktif' : 'Pasif'}</div>
+              <div className="text-2xl font-extrabold text-gray-900 mt-1">{s.title}</div>
+              <div className="text-xl text-gray-800 mt-2">{s.pulledInfo}</div>
+            </div>
+          ))}
+        </div>
+      )}
 
       {/* Durum Kartları */}
       {status && (
