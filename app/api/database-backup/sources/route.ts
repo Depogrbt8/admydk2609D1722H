@@ -30,11 +30,11 @@ export async function GET() {
         pulledInfo: `${lastBackup.text} • ${lastBackup.origin}`,
       },
       {
-        key: 'github-repo',
-        title: 'adminhersaat',
-        subtitle: statusChecks.githubRepo ? 'Aktif' : 'Pasif',
-        active: statusChecks.githubRepo,
-        pulledInfo: 'grbt8yedek',
+        key: 'gitlab-daily',
+        title: 'GitLab Günlük',
+        subtitle: statusChecks.gitlabApi ? 'Aktif' : 'Pasif',
+        active: statusChecks.gitlabApi,
+        pulledInfo: await getLastGitLabDate(),
       },
       {
         key: 'backup-type',
@@ -68,6 +68,8 @@ async function checkAllStatuses() {
   const statusChecks = {
     githubApi: false,
     githubRepo: false,
+    gitlabApi: false,
+    gitlabRepo: false,
     databaseConnection: false,
     vercelCron: false
   }
@@ -114,7 +116,48 @@ async function checkAllStatuses() {
       statusChecks.databaseConnection = false
     }
 
-    // 4. Vercel Cron durumu (her zaman aktif - Vercel'de çalışıyor)
+    // 3. GitLab API durumu kontrolü
+    try {
+      const gitlabToken = process.env.GITLAB_BACKUP_TOKEN
+      if (gitlabToken) {
+        const response = await fetch('https://gitlab.com/api/v4/user', {
+          headers: {
+            'PRIVATE-TOKEN': gitlabToken,
+            'Accept': 'application/json'
+          }
+        })
+        statusChecks.gitlabApi = response.ok
+      }
+    } catch (error) {
+      console.log('GitLab API kontrolü başarısız:', error)
+    }
+
+    // 4. GitLab Repository durumu kontrolü
+    try {
+      const gitlabToken = process.env.GITLAB_BACKUP_TOKEN
+      if (gitlabToken) {
+        const response = await fetch('https://gitlab.com/api/v4/projects/Depogrbt8%2Fgunlukyedek', {
+          headers: {
+            'PRIVATE-TOKEN': gitlabToken,
+            'Accept': 'application/json'
+          }
+        })
+        statusChecks.gitlabRepo = response.ok
+      }
+    } catch (error) {
+      console.log('GitLab Repository kontrolü başarısız:', error)
+    }
+
+    // 5. Database bağlantı durumu kontrolü
+    try {
+      await prisma.user.count()
+      statusChecks.databaseConnection = true
+    } catch (error) {
+      console.log('Database bağlantı kontrolü başarısız:', error)
+      statusChecks.databaseConnection = false
+    }
+
+    // 6. Vercel Cron durumu (her zaman aktif - Vercel'de çalışıyor)
     statusChecks.vercelCron = true
 
   } catch (error) {
@@ -214,6 +257,60 @@ async function getLastBackupDate(): Promise<{ text: string, origin: 'GitHub' | '
   } catch (error) {
     console.error('GitHub commit tarihi alınamadı:', error)
     return { text: 'Hata', origin: 'Hata' }
+  }
+}
+
+// GitLab repo'dan en son commit tarihini çeken fonksiyon
+async function getLastGitLabDate(): Promise<string> {
+  try {
+    const gitlabToken = process.env.GITLAB_BACKUP_TOKEN
+    if (!gitlabToken) {
+      return 'Token yok'
+    }
+
+    // GitLab API'den en son commit'i çek (cache-busting ile)
+    const cacheBuster = Date.now()
+    const response = await fetch(`https://gitlab.com/api/v4/projects/Depogrbt8%2Fgunlukyedek/repository/commits?per_page=1&t=${cacheBuster}`, {
+      headers: {
+        'PRIVATE-TOKEN': gitlabToken,
+        'Accept': 'application/json',
+        'Cache-Control': 'no-cache'
+      }
+    })
+
+    if (!response.ok) {
+      return 'API Hatası'
+    }
+
+    const commits = await response.json()
+    if (!Array.isArray(commits) || commits.length === 0) {
+      return 'Commit yok'
+    }
+
+    // En son commit'i al
+    const latestCommit = commits[0]
+
+    // Commit tarihini al
+    const commitDate = new Date(latestCommit.created_at)
+
+    // Geçersiz tarih kontrolü
+    if (isNaN(commitDate.getTime())) {
+      return 'Tarih hatası'
+    }
+
+    // Avrupa Paris saati ile tam tarih formatı
+    return commitDate.toLocaleString('tr-TR', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      timeZone: 'Europe/Paris'
+    })
+
+  } catch (error) {
+    console.error('GitLab commit tarihi alınamadı:', error)
+    return 'Hata'
   }
 }
 
