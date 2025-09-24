@@ -15,13 +15,8 @@ interface SourceStatus {
 
 export async function GET() {
   try {
-    // Read common backup file size to show as pulled info
-    const backupFile = path.join(process.cwd(), 'backups', 'database-backup.json')
-    let pulled = '! cekilen veri !'
-    if (fs.existsSync(backupFile)) {
-      const sizeKb = (fs.statSync(backupFile).size / 1024).toFixed(1)
-      pulled = `${sizeKb} KB cekilen veri`
-    }
+    // GitHub repo'dan en son işlem tarihini çek
+    const lastBackupDate = await getLastBackupDate()
 
     // Gerçek durumları kontrol et
     const statusChecks = await checkAllStatuses()
@@ -32,7 +27,7 @@ export async function GET() {
         title: 'GitHub Her Saat',
         subtitle: statusChecks.githubApi ? 'Aktif' : 'Pasif',
         active: statusChecks.githubApi,
-        pulledInfo: pulled,
+        pulledInfo: lastBackupDate,
       },
       {
         key: 'github-repo',
@@ -127,6 +122,57 @@ async function checkAllStatuses() {
   }
 
   return statusChecks
+}
+
+// GitHub repo'dan en son backup tarihini çeken fonksiyon
+async function getLastBackupDate(): Promise<string> {
+  try {
+    const githubToken = process.env.GITHUB_BACKUP_TOKEN
+    if (!githubToken) {
+      return 'Token yok'
+    }
+
+    // GitHub API'den en son commit'i çek
+    const response = await fetch('https://api.github.com/repos/grbt8yedek/adminhersaat/commits?per_page=1', {
+      headers: {
+        'Authorization': `token ${githubToken}`,
+        'Accept': 'application/vnd.github.v3+json'
+      }
+    })
+
+    if (!response.ok) {
+      return 'API Hatası'
+    }
+
+    const commits = await response.json()
+    if (commits.length === 0) {
+      return 'Commit yok'
+    }
+
+    const lastCommit = commits[0]
+    const commitDate = new Date(lastCommit.commit.committer.date)
+    
+    // Türkçe tarih formatı
+    const now = new Date()
+    const diffMs = now.getTime() - commitDate.getTime()
+    const diffMinutes = Math.floor(diffMs / (1000 * 60))
+    const diffHours = Math.floor(diffMs / (1000 * 60 * 60))
+    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24))
+
+    if (diffMinutes < 60) {
+      return `${diffMinutes} dk önce`
+    } else if (diffHours < 24) {
+      return `${diffHours} saat önce`
+    } else if (diffDays < 7) {
+      return `${diffDays} gün önce`
+    } else {
+      return commitDate.toLocaleDateString('tr-TR')
+    }
+
+  } catch (error) {
+    console.error('GitHub commit tarihi alınamadı:', error)
+    return 'Hata'
+  }
 }
 
 
