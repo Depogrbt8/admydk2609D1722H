@@ -191,14 +191,14 @@ async function getLastBackupDate(): Promise<string> {
             const diffHours = Math.floor(diffMs / (1000 * 60 * 60))
             const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24))
 
-            // Avrupa saati (UTC+2) ile tam tarih formatı
+            // Avrupa Paris saati ile tam tarih formatı
             return backupDate.toLocaleString('tr-TR', {
               year: 'numeric',
               month: '2-digit',
               day: '2-digit',
               hour: '2-digit',
               minute: '2-digit',
-              timeZone: 'Europe/Istanbul'
+              timeZone: 'Europe/Paris'
             })
           }
         }
@@ -216,14 +216,14 @@ async function getLastBackupDate(): Promise<string> {
       return 'Tarih hatası'
     }
     
-    // Avrupa saati (UTC+2) ile tam tarih formatı
+    // Avrupa Paris saati ile tam tarih formatı
     return backupDate.toLocaleString('tr-TR', {
       year: 'numeric',
       month: '2-digit',
       day: '2-digit',
       hour: '2-digit',
       minute: '2-digit',
-      timeZone: 'Europe/Istanbul'
+      timeZone: 'Europe/Paris'
     })
 
   } catch (error) {
