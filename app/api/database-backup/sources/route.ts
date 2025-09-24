@@ -37,11 +37,11 @@ export async function GET() {
         pulledInfo: await getLastGitLabDate(),
       },
       {
-        key: 'backup-type',
-        title: 'Kapsamlı Backup',
-        subtitle: statusChecks.databaseConnection ? 'Aktif' : 'Pasif',
-        active: statusChecks.databaseConnection,
-        pulledInfo: 'DB+Schema+Users',
+        key: 'cronbackup-repo',
+        title: 'Ana Site 6 Saat',
+        subtitle: statusChecks.cronbackupRepo ? 'Aktif' : 'Pasif',
+        active: statusChecks.cronbackupRepo,
+        pulledInfo: await getLastCronbackupDate(),
       },
       {
         key: 'cron-status',
@@ -70,6 +70,7 @@ async function checkAllStatuses() {
     githubRepo: false,
     gitlabApi: false,
     gitlabRepo: false,
+    cronbackupRepo: false,
     databaseConnection: false,
     vercelCron: false
   }
@@ -157,7 +158,32 @@ async function checkAllStatuses() {
       statusChecks.databaseConnection = false
     }
 
-    // 6. Vercel Cron durumu (her zaman aktif - Vercel'de çalışıyor)
+    // 5. Cronbackup Repository durumu kontrolü
+    try {
+      const githubToken = process.env.GITHUB_BACKUP_TOKEN
+      if (githubToken) {
+        const response = await fetch('https://api.github.com/repos/grbt8yedek/cronbackup', {
+          headers: {
+            'Authorization': `token ${githubToken}`,
+            'Accept': 'application/vnd.github.v3+json'
+          }
+        })
+        statusChecks.cronbackupRepo = response.ok
+      }
+    } catch (error) {
+      console.log('Cronbackup Repository kontrolü başarısız:', error)
+    }
+
+    // 6. Database bağlantı durumu kontrolü
+    try {
+      await prisma.user.count()
+      statusChecks.databaseConnection = true
+    } catch (error) {
+      console.log('Database bağlantı kontrolü başarısız:', error)
+      statusChecks.databaseConnection = false
+    }
+
+    // 7. Vercel Cron durumu (her zaman aktif - Vercel'de çalışıyor)
     statusChecks.vercelCron = true
 
   } catch (error) {
@@ -310,6 +336,60 @@ async function getLastGitLabDate(): Promise<string> {
 
   } catch (error) {
     console.error('GitLab commit tarihi alınamadı:', error)
+    return 'Hata'
+  }
+}
+
+// Cronbackup repo'dan en son commit tarihini çeken fonksiyon
+async function getLastCronbackupDate(): Promise<string> {
+  try {
+    const githubToken = process.env.GITHUB_BACKUP_TOKEN
+    if (!githubToken) {
+      return 'Token yok'
+    }
+
+    // GitHub API'den en son commit'i çek (cache-busting ile)
+    const cacheBuster = Date.now()
+    const response = await fetch(`https://api.github.com/repos/grbt8yedek/cronbackup/commits?t=${cacheBuster}`, {
+      headers: {
+        'Authorization': `token ${githubToken}`,
+        'Accept': 'application/vnd.github.v3+json',
+        'Cache-Control': 'no-cache'
+      }
+    })
+
+    if (!response.ok) {
+      return 'API Hatası'
+    }
+
+    const commits = await response.json()
+    if (!Array.isArray(commits) || commits.length === 0) {
+      return 'Commit yok'
+    }
+
+    // En son commit'i al
+    const latestCommit = commits[0]
+
+    // Commit tarihini al
+    const commitDate = new Date(latestCommit.commit.committer.date)
+
+    // Geçersiz tarih kontrolü
+    if (isNaN(commitDate.getTime())) {
+      return 'Tarih hatası'
+    }
+
+    // Avrupa Paris saati ile tam tarih formatı
+    return commitDate.toLocaleString('tr-TR', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      timeZone: 'Europe/Paris'
+    })
+
+  } catch (error) {
+    console.error('Cronbackup commit tarihi alınamadı:', error)
     return 'Hata'
   }
 }
