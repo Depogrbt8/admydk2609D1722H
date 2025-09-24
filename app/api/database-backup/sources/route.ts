@@ -191,15 +191,14 @@ async function getLastBackupDate(): Promise<string> {
             const diffHours = Math.floor(diffMs / (1000 * 60 * 60))
             const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24))
 
-            if (diffMinutes < 60) {
-              return `${diffMinutes} dk önce`
-            } else if (diffHours < 24) {
-              return `${diffHours} saat önce`
-            } else if (diffDays < 7) {
-              return `${diffDays} gün önce`
-            } else {
-              return backupDate.toLocaleDateString('tr-TR')
-            }
+            // Tam tarih formatı
+            return backupDate.toLocaleString('tr-TR', {
+              year: 'numeric',
+              month: '2-digit',
+              day: '2-digit',
+              hour: '2-digit',
+              minute: '2-digit'
+            })
           }
         }
       }
@@ -216,22 +215,14 @@ async function getLastBackupDate(): Promise<string> {
       return 'Tarih hatası'
     }
     
-    // Türkçe tarih formatı
-    const now = new Date()
-    const diffMs = now.getTime() - backupDate.getTime()
-    const diffMinutes = Math.floor(diffMs / (1000 * 60))
-    const diffHours = Math.floor(diffMs / (1000 * 60 * 60))
-    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24))
-
-    if (diffMinutes < 60) {
-      return `${diffMinutes} dk önce`
-    } else if (diffHours < 24) {
-      return `${diffHours} saat önce`
-    } else if (diffDays < 7) {
-      return `${diffDays} gün önce`
-    } else {
-      return backupDate.toLocaleDateString('tr-TR')
-    }
+    // Tam tarih formatı
+    return backupDate.toLocaleString('tr-TR', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit'
+    })
 
   } catch (error) {
     console.error('GitHub backup dosyası tarihi alınamadı:', error)
