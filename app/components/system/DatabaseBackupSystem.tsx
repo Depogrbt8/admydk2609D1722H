@@ -20,12 +20,12 @@ export default function DatabaseBackupSystem() {
   const [isLoading, setIsLoading] = useState(true)
   const [isToggling, setIsToggling] = useState(false)
   const [sources, setSources] = useState<Array<{ key: string; title: string; subtitle: string; active: boolean; pulledInfo: string }>>([])
-  const [secLine, setSecLine] = useState<string>("")
+  const [security, setSecurity] = useState<any>(null)
 
   useEffect(() => {
     fetchBackupStatus()
     fetchSources()
-    fetchSecurityLine()
+    fetchSecurity()
   }, [])
 
   const fetchBackupStatus = async () => {
@@ -53,20 +53,16 @@ export default function DatabaseBackupSystem() {
     }
   }
 
-  const fetchSecurityLine = async () => {
+  const fetchSecurity = async () => {
     try {
       const res = await fetch('/api/system/security/status')
       const json = await res.json()
       if (json.success) {
-        const d = json.data
-        // 4 metrik tek satır: aktif saldırılar, engellenen istekler, rate-limit blokları, son tehdit zamanı
-        const activeAttacks = d?.realTimeThreats?.activeAttacks ?? 0
-        const blockedRequests = d?.realTimeThreats?.blockedRequests ?? 0
-        const rateBlocked = d?.rateLimitingStatus?.blockedRequests ?? 0
-        const lastThreat = d?.realTimeThreats?.lastThreat || '—'
-        setSecLine(`Aktif: ${activeAttacks} • Blok: ${blockedRequests} • RL: ${rateBlocked} • Son: ${lastThreat}`)
+        setSecurity(json.data)
       }
-    } catch {}
+    } catch (e) {
+      console.log('Security data fetch failed:', e)
+    }
   }
 
   const toggleAutoBackup = async () => {
@@ -130,9 +126,76 @@ export default function DatabaseBackupSystem() {
           ))}
         </div>
       )}
-      {/* Güvenlik Durumu - minimalist tek satır */}
-      {secLine && (
-        <div className="mt-2 text-xs text-gray-700 truncate">🔒 {secLine}</div>
+      {/* Güvenlik Bölümü */}
+      {security && (
+        <div className="mt-6 bg-gray-50 rounded-lg p-4 border border-gray-200">
+          <div className="flex items-center justify-between mb-3">
+            <h4 className="text-lg font-semibold text-gray-900 flex items-center">
+              🛡️ Güvenlik Durumu
+            </h4>
+            <div className={`text-sm px-2 py-1 rounded-full ${
+              security.overallScore >= 90 ? 'bg-green-100 text-green-700' :
+              security.overallScore >= 70 ? 'bg-yellow-100 text-yellow-700' :
+              'bg-red-100 text-red-700'
+            }`}>
+              Skor: {security.overallScore}/100
+            </div>
+          </div>
+          
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            {/* Aktif Saldırılar */}
+            <div className="bg-white rounded-lg p-3 border">
+              <div className="flex items-center justify-between">
+                <div className="text-xs text-gray-600">Aktif Saldırı</div>
+                {security.realTimeThreats?.activeAttacks > 5 && (
+                  <span className="text-red-500 text-xs">⚠️</span>
+                )}
+              </div>
+              <div className="text-lg font-bold text-gray-900">
+                {security.realTimeThreats?.activeAttacks || 0}
+              </div>
+            </div>
+
+            {/* Engellenen İstekler */}
+            <div className="bg-white rounded-lg p-3 border">
+              <div className="flex items-center justify-between">
+                <div className="text-xs text-gray-600">Engellenen</div>
+                {security.realTimeThreats?.blockedRequests > 500 && (
+                  <span className="text-yellow-500 text-xs">⚠️</span>
+                )}
+              </div>
+              <div className="text-lg font-bold text-gray-900">
+                {security.realTimeThreats?.blockedRequests || 0}
+              </div>
+            </div>
+
+            {/* Rate Limit */}
+            <div className="bg-white rounded-lg p-3 border">
+              <div className="flex items-center justify-between">
+                <div className="text-xs text-gray-600">Rate Limit</div>
+                {security.rateLimitingStatus?.blockedRequests > 100 && (
+                  <span className="text-orange-500 text-xs">⚠️</span>
+                )}
+              </div>
+              <div className="text-lg font-bold text-gray-900">
+                {security.rateLimitingStatus?.blockedRequests || 0}
+              </div>
+            </div>
+
+            {/* Son Tehdit */}
+            <div className="bg-white rounded-lg p-3 border">
+              <div className="text-xs text-gray-600">Son Tehdit</div>
+              <div className="text-sm font-semibold text-gray-900 truncate">
+                {security.realTimeThreats?.lastThreat || 'Yok'}
+              </div>
+            </div>
+          </div>
+
+          {/* Durum Mesajı */}
+          <div className="mt-3 text-xs text-gray-600 text-center">
+            {security.message || 'Güvenlik sistemleri izleniyor'}
+          </div>
+        </div>
       )}
     </div>
   )
