@@ -113,66 +113,6 @@ export default function DatabaseBackupSystem() {
         </div>
       )}
 
-      {/* Durum Kartları */}
-      {status && (
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-          <div className="bg-blue-50 p-4 rounded-lg">
-            <p className="text-sm text-blue-600 font-medium">Son Yedekleme</p>
-            <p className="text-lg font-semibold text-blue-900">
-              {status.lastBackup 
-                ? new Date(status.lastBackup).toLocaleString('tr-TR')
-                : 'Henüz yok'
-              }
-            </p>
-          </div>
-          
-          <div className="bg-green-50 p-4 rounded-lg">
-            <p className="text-sm text-green-600 font-medium">Sonraki Yedekleme</p>
-            <p className="text-lg font-semibold text-green-900">
-              {status.nextBackup 
-                ? new Date(status.nextBackup).toLocaleString('tr-TR')
-                : '2 saat sonra'
-              }
-            </p>
-          </div>
-          
-          <div className="bg-purple-50 p-4 rounded-lg">
-            <p className="text-sm text-purple-600 font-medium">Toplam Kayıt</p>
-            <p className="text-lg font-semibold text-purple-900">{status.totalRecords.toLocaleString()}</p>
-          </div>
-          
-          <div className="bg-orange-50 p-4 rounded-lg">
-            <p className="text-sm text-orange-600 font-medium">Yedek Boyutu</p>
-            <p className="text-lg font-semibold text-orange-900">{status.backupSize}</p>
-          </div>
-        </div>
-      )}
-
-      {/* Değişiklik İstatistikleri */}
-      {status?.changes && (
-        <div className="bg-gray-50 p-4 rounded-lg mb-6">
-          <h4 className="font-medium text-gray-900 mb-3">📊 Son Değişiklikler</h4>
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="text-center">
-              <p className="text-2xl font-bold text-green-600">+{status.changes.newUsers}</p>
-              <p className="text-sm text-gray-600">Yeni Kullanıcı</p>
-            </div>
-            <div className="text-center">
-              <p className="text-2xl font-bold text-blue-600">+{status.changes.newReservations}</p>
-              <p className="text-sm text-gray-600">Yeni Rezervasyon</p>
-            </div>
-            <div className="text-center">
-              <p className="text-2xl font-bold text-purple-600">+{status.changes.newPayments}</p>
-              <p className="text-sm text-gray-600">Yeni Ödeme</p>
-            </div>
-            <div className="text-center">
-              <p className="text-2xl font-bold text-orange-600">{status.changes.updatedRecords}</p>
-              <p className="text-sm text-gray-600">Güncellenen</p>
-            </div>
-          </div>
-        </div>
-      )}
-
       {/* Sistem Durumu */}
       <div className="flex justify-center mb-6">
         <div className={`px-8 py-3 rounded-lg font-medium text-lg ${
