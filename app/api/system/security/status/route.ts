@@ -1,76 +1,115 @@
 import { NextResponse } from 'next/server'
+import { PrismaClient } from '@prisma/client'
+
+const prisma = new PrismaClient()
 
 export async function GET() {
   try {
-    // Demo güvenlik verileri - gerçek uygulamada veritabanından çekilecek
+    const now = new Date()
+    const last24h = new Date(now.getTime() - 24 * 60 * 60 * 1000)
+    const lastHour = new Date(now.getTime() - 60 * 60 * 1000)
+
+    // 1. Rate limit blokları (son 24 saat)
+    const rateLimitBlocks = await prisma.systemLog.count({
+      where: {
+        source: 'rate_limit_block',
+        level: 'warn',
+        timestamp: { gte: last24h }
+      }
+    })
+
+    // 2. Webhook hataları (son 24 saat)
+    const webhookErrors = await prisma.systemLog.count({
+      where: {
+        source: 'webhook_invalid_signature',
+        level: 'warn',
+        timestamp: { gte: last24h }
+      }
+    })
+
+    // 3. Son backup durumu
+    const lastBackup = await prisma.systemLog.findFirst({
+      where: {
+        OR: [
+          { source: 'backup_github' },
+          { source: 'backup_github_webhook' }
+        ],
+        level: 'info'
+      },
+      orderBy: { timestamp: 'desc' }
+    })
+
+    // 4. Toplam sistem logları (son 24 saat)
+    const totalLogs = await prisma.systemLog.count({
+      where: {
+        timestamp: { gte: last24h }
+      }
+    })
+
+    // 5. Hata logları (son 24 saat)
+    const errorLogs = await prisma.systemLog.count({
+      where: {
+        level: 'ERROR',
+        timestamp: { gte: last24h }
+      }
+    })
+
+    // 6. Son tehdit zamanı
+    const lastThreat = await prisma.systemLog.findFirst({
+      where: {
+        OR: [
+          { source: 'rate_limit_block' },
+          { source: 'webhook_invalid_signature' }
+        ],
+        level: 'warn'
+      },
+      orderBy: { timestamp: 'desc' }
+    })
+
+    // 7. Aktif saldırı tahmini (son 1 saat içindeki bloklar)
+    const recentBlocks = await prisma.systemLog.count({
+      where: {
+        source: 'rate_limit_block',
+        level: 'warn',
+        timestamp: { gte: lastHour }
+      }
+    })
+
+    // Güvenlik skoru hesapla (100 üzerinden)
+    let overallScore = 100
+    if (rateLimitBlocks > 50) overallScore -= 10
+    if (webhookErrors > 5) overallScore -= 15
+    if (errorLogs > 10) overallScore -= 10
+    if (!lastBackup) overallScore -= 20
+    if (recentBlocks > 10) overallScore -= 15
+
+    // Son tehdit zamanı formatla
+    const lastThreatTime = lastThreat ? 
+      formatTimeAgo(lastThreat.timestamp) : 'Yok'
+
     const securityData = {
-      overallScore: 95,
-      failedLogins: 3,
-      blockedIPs: 1,
-      lastCheck: new Date().toISOString(),
-      threats: {
-        total: 0,
-        critical: 0,
-        warning: 0,
-        info: 0
+      overallScore: Math.max(overallScore, 0),
+      message: overallScore >= 90 ? 'Güvenlik durumu iyi' :
+               overallScore >= 70 ? 'Güvenlik durumu orta' :
+               'Güvenlik durumu risk altında',
+      
+      realTimeThreats: {
+        activeAttacks: recentBlocks,
+        blockedRequests: rateLimitBlocks + webhookErrors,
+        lastThreat: lastThreatTime
       },
-      firewallStatus: {
-        active: true,
-        rules: 12,
-        blockedRequests: 45
-      },
-      sslStatus: {
-        valid: true,
-        daysUntilExpiry: 30
-      },
+      
       rateLimitingStatus: {
         active: true,
-        blockedRequests: 12
+        blockedRequests: rateLimitBlocks
       },
-      message: 'Tüm güvenlik sistemleri aktif ve çalışıyor',
-      
-      // Saldırı Analizi
-      attackAnalysis: {
-        last24h: 12,
-        topCountries: [
-          { country: 'Çin', count: 45, flag: '🇨🇳' },
-          { country: 'Rusya', count: 32, flag: '🇷🇺' },
-          { country: 'ABD', count: 28, flag: '🇺🇸' },
-          { country: 'Almanya', count: 15, flag: '🇩🇪' }
-        ],
-        attackTypes: {
-          ddos: 8,
-          bruteForce: 15,
-          xss: 3,
-          sqlInjection: 2
-        },
-        peakHours: ['02:00', '14:00', '22:00']
-      },
-      
-      // Şüpheli Aktivite
-      suspiciousActivity: {
-        botTraffic: 156,
-        vpnUsers: 23,
-        torUsers: 7,
-        failedLogins: 89,
-        unusualHours: 12
-      },
-      
-      // Gerçek Zamanlı Tehditler
-      realTimeThreats: {
-        activeAttacks: 3,
-        blockedRequests: 234,
-        firewallAlerts: 8,
-        malwareDetected: 0,
-        lastThreat: '2 dakika önce'
-      },
-      
-      // Coğrafi Analiz
-      geoAnalysis: {
-        totalCountries: 45,
-        riskiestRegions: ['Asya', 'Doğu Avrupa'],
-        safestRegions: ['Kuzey Avrupa', 'Okyanusya'],
-        proxyUsage: 12.5
+
+      // İstatistikler
+      stats: {
+        totalLogs,
+        errorLogs,
+        webhookErrors,
+        lastBackup: lastBackup ? formatTimeAgo(lastBackup.timestamp) : 'Yok'
       }
     }
 
@@ -84,5 +123,20 @@ export async function GET() {
       success: false, 
       error: error.message 
     }, { status: 500 })
+  } finally {
+    await prisma.$disconnect()
   }
+}
+
+function formatTimeAgo(date: Date): string {
+  const now = new Date()
+  const diffMs = now.getTime() - date.getTime()
+  const diffMins = Math.floor(diffMs / (1000 * 60))
+  const diffHours = Math.floor(diffMs / (1000 * 60 * 60))
+  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24))
+
+  if (diffMins < 1) return 'Az önce'
+  if (diffMins < 60) return `${diffMins} dakika önce`
+  if (diffHours < 24) return `${diffHours} saat önce`
+  return `${diffDays} gün önce`
 }
