@@ -132,11 +132,13 @@ async function getLastBackupDate(): Promise<string> {
       return 'Token yok'
     }
 
-    // GitHub API'den en son commit'i çek
-    const response = await fetch('https://api.github.com/repos/grbt8yedek/adminhersaat/commits', {
+    // GitHub API'den en son commit'i çek (cache-busting ile)
+    const cacheBuster = Date.now()
+    const response = await fetch(`https://api.github.com/repos/grbt8yedek/adminhersaat/commits?t=${cacheBuster}`, {
       headers: {
         'Authorization': `token ${githubToken}`,
-        'Accept': 'application/vnd.github.v3+json'
+        'Accept': 'application/vnd.github.v3+json',
+        'Cache-Control': 'no-cache'
       }
     })
 
