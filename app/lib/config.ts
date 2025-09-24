@@ -32,7 +32,7 @@ export const config = {
   // CORS
   cors: {
     allowedOrigins: process.env.NODE_ENV === "production" 
-      ? ["https://gurbetbiz.com", "https://admin.gurbetbiz.com"]
+      ? ["https://www.grbt8.store", "https://anasite.grbt8.store"]
       : ["http://localhost:3000", "http://localhost:3004"]
   }
 }

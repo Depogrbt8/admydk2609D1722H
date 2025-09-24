@@ -2,10 +2,12 @@ import { NextRequest, NextResponse } from 'next/server'
 import { writeFile, mkdir } from 'fs/promises'
 import { join } from 'path'
 import { existsSync } from 'fs'
+import { createRateLimit } from '@/lib/rateLimit'
+import config from '@/app/lib/config'
 
 // CORS middleware
 function corsMiddleware(response: NextResponse) {
-  response.headers.set('Access-Control-Allow-Origin', '*')
+  response.headers.set('Access-Control-Allow-Origin', config.cors.allowedOrigins[0])
   response.headers.set('Access-Control-Allow-Methods', 'POST, OPTIONS')
   response.headers.set('Access-Control-Allow-Headers', 'Content-Type')
   return response
@@ -17,7 +19,13 @@ export async function OPTIONS() {
   return corsMiddleware(response)
 }
 
+const rateLimit = createRateLimit({ windowMs: 5 * 60 * 1000, maxRequests: 20 })
+
 export async function POST(request: NextRequest) {
+  // Rate limit
+  const rl = await rateLimit(request)
+  if ((rl as any)?.status === 429) return rl as NextResponse
+
   try {
     const data = await request.formData()
     const file: File | null = data.get('file') as unknown as File

@@ -1,8 +1,15 @@
 import { NextResponse } from 'next/server'
 import resendService from '@/app/lib/resend'
 import { prisma } from '@/app/lib/prisma'
+import { createRateLimit } from '@/lib/rateLimit'
+
+const rateLimit = createRateLimit({ windowMs: 10 * 60 * 1000, maxRequests: 50 })
 
 export async function POST(request: Request) {
+  // Rate limit
+  const rl = await rateLimit(request as any)
+  if ((rl as any)?.status === 429) return rl as NextResponse
+
   try {
     const body = await request.json()
     const { 
@@ -135,8 +142,8 @@ export async function POST(request: Request) {
               templateName: 'Manuel Email',
               status: result.success ? 'sent' : 'failed',
               errorMessage: result.error,
-              ipAddress: request.headers.get('x-forwarded-for') || 'unknown',
-              userAgent: request.headers.get('user-agent') || 'unknown'
+              ipAddress: (request.headers as any).get?.('x-forwarded-for') || 'unknown',
+              userAgent: (request.headers as any).get?.('user-agent') || 'unknown'
             }
           })
         } catch (logError) {

@@ -1,14 +1,20 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { PrismaClient } from '@prisma/client'
 import crypto from 'crypto'
+import { createRateLimit, rateLimitConfigs } from '@/lib/rateLimit'
 
 const prisma = new PrismaClient()
+const rateLimit = createRateLimit({ windowMs: 60 * 1000, maxRequests: 20 })
 
 // GitHub Webhook: push events
 export async function POST(request: NextRequest) {
+  // Rate limit
+  const rl = await rateLimit(request)
+  if ((rl as any)?.status === 429) return rl as NextResponse
   const secret = process.env.GITHUB_WEBHOOK_SECRET || ''
   const githubEvent = request.headers.get('x-github-event') || ''
   const signature = request.headers.get('x-hub-signature-256') || ''
+  const githubIp = request.headers.get('x-forwarded-for') || request.ip || ''
 
   try {
     if (!secret) {
@@ -50,7 +56,8 @@ export async function POST(request: NextRequest) {
           commitMessage: commit?.message,
           added: commit?.added,
           removed: commit?.removed,
-          modified: commit?.modified
+          modified: commit?.modified,
+          remoteIp: githubIp
         })
       }
     })

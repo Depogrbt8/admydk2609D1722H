@@ -22,12 +22,27 @@ export function middleware(request: NextRequest) {
     pathname.startsWith('/api/')
   ) {
     const response = NextResponse.next()
-    
-    // SEO güvenlik headers'larını ekle
+
+    // Temel güvenlik
     response.headers.set('X-Robots-Tag', 'noindex, nofollow, noarchive, nosnippet')
     response.headers.set('X-Frame-Options', 'DENY')
     response.headers.set('X-Content-Type-Options', 'nosniff')
-    response.headers.set('Referrer-Policy', 'no-referrer')
+    response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin')
+
+    // Sıkı Content Security Policy (admin panel odaklı)
+    const csp = [
+      "default-src 'self'",
+      "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
+      "style-src 'self' 'unsafe-inline'",
+      "img-src 'self' data: https:",
+      "font-src 'self'",
+      "connect-src 'self' https://api.github.com https://www.grbt8.store https://anasite.grbt8.store",
+      "frame-ancestors 'none'",
+      "base-uri 'self'",
+      "form-action 'self'"
+    ].join('; ')
+
+    response.headers.set('Content-Security-Policy', csp)
 
     return response
   }
