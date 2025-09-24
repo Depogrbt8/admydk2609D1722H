@@ -15,8 +15,8 @@ interface SourceStatus {
 
 export async function GET() {
   try {
-    // GitHub repo'dan en son işlem tarihini çek
-    const lastBackupDate = await getLastBackupDate()
+    // Önce local sistem log'larından en güncel backup zamanını al (anlık ve güvenilir)
+    const lastBackup = await getLastBackupDate()
 
     // Gerçek durumları kontrol et
     const statusChecks = await checkAllStatuses()
@@ -27,7 +27,7 @@ export async function GET() {
         title: 'GitHub Her Saat',
         subtitle: statusChecks.githubApi ? 'Aktif' : 'Pasif',
         active: statusChecks.githubApi,
-        pulledInfo: lastBackupDate,
+        pulledInfo: `${lastBackup.text} • ${lastBackup.origin}`,
       },
       {
         key: 'github-repo',
@@ -124,15 +124,15 @@ async function checkAllStatuses() {
   return statusChecks
 }
 
-// GitHub repo'dan en son commit tarihini çeken fonksiyon
-async function getLastBackupDate(): Promise<string> {
+// En son backup zamanını belirleyen fonksiyon: Önce GitHub, sonra SystemLog fallback
+async function getLastBackupDate(): Promise<{ text: string, origin: 'GitHub' | 'Webhook' | 'Local' | 'Hata' | 'Yok' }> {
   try {
+    // 1) GitHub API birincil kaynak (repo gerçekten güncellendi mi?)
     const githubToken = process.env.GITHUB_BACKUP_TOKEN
     if (!githubToken) {
-      return 'Token yok'
+      return { text: 'Token yok', origin: 'Hata' }
     }
 
-    // GitHub API'den en son commit'i çek (cache-busting ile)
     const cacheBuster = Date.now()
     const response = await fetch(`https://api.github.com/repos/grbt8yedek/adminhersaat/commits?t=${cacheBuster}`, {
       headers: {
@@ -142,39 +142,78 @@ async function getLastBackupDate(): Promise<string> {
       }
     })
 
-    if (!response.ok) {
-      return 'API Hatası'
+    if (response.ok) {
+      const commits = await response.json()
+      if (Array.isArray(commits) && commits.length > 0) {
+        const latestCommit = commits[0]
+        const commitDate = new Date(latestCommit.commit.committer.date)
+        if (!isNaN(commitDate.getTime())) {
+          return { text: commitDate.toLocaleString('tr-TR', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+            timeZone: 'Europe/Paris'
+          }), origin: 'GitHub' }
+        }
+      }
     }
 
-    const commits = await response.json()
-    if (!Array.isArray(commits) || commits.length === 0) {
-      return 'Commit yok'
+    // 2) Fallback: Webhook kaydı (en doğru anlık push bilgisi)
+    try {
+      const lastWebhook = await prisma.systemLog.findFirst({
+        where: { source: 'backup_github_webhook', level: 'info' },
+        orderBy: { timestamp: 'desc' }
+      })
+      if (lastWebhook) {
+        const ts = (() => {
+          try {
+            const meta = lastWebhook.metadata ? JSON.parse(lastWebhook.metadata) : null
+            return meta?.commitTimestamp || lastWebhook.timestamp
+          } catch {
+            return lastWebhook.timestamp
+          }
+        })()
+        return { text: new Date(ts).toLocaleString('tr-TR', {
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit',
+          hour: '2-digit',
+          minute: '2-digit',
+          timeZone: 'Europe/Paris'
+        }), origin: 'Webhook' }
+      }
+    } catch (e) {
+      console.log('Webhook log okunamadı:', e)
     }
 
-    // En son commit'i al
-    const latestCommit = commits[0]
+    // 3) Fallback: SystemLog (uygulama içi backup tamamlama kaydı)
+    try {
+      const lastLog = await prisma.systemLog.findFirst({
+        where: { source: 'backup_github', level: 'info' },
+        orderBy: { timestamp: 'desc' }
+      })
 
-    // Commit tarihini al
-    const commitDate = new Date(latestCommit.commit.committer.date)
-
-    // Geçersiz tarih kontrolü
-    if (isNaN(commitDate.getTime())) {
-      return 'Tarih hatası'
+      if (lastLog) {
+        return { text: new Date(lastLog.timestamp).toLocaleString('tr-TR', {
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit',
+          hour: '2-digit',
+          minute: '2-digit',
+          timeZone: 'Europe/Paris'
+        }), origin: 'Local' }
+      }
+    } catch (e) {
+      console.log('SystemLog okunamadı:', e)
     }
 
-    // Avrupa Paris saati ile tam tarih formatı
-    return commitDate.toLocaleString('tr-TR', {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit',
-      timeZone: 'Europe/Paris'
-    })
+    return { text: 'Kayıt bulunamadı', origin: 'Yok' }
 
   } catch (error) {
     console.error('GitHub commit tarihi alınamadı:', error)
-    return 'Hata'
+    return { text: 'Hata', origin: 'Hata' }
   }
 }
 

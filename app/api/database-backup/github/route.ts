@@ -101,6 +101,24 @@ export async function GET(request: NextRequest) {
     if (pushResult.success) {
       console.log('✅ GitHub backup başarılı:', pushResult.message)
       
+      // Sistem log'una başarılı backup bilgisini yaz
+      try {
+        await prisma.systemLog.create({
+          data: {
+            level: 'info',
+            message: 'GitHub backup başarıyla tamamlandı',
+            source: 'backup_github',
+            metadata: JSON.stringify({
+              fileName: backupFileName,
+              sha: pushResult.sha,
+              sizeKb: Number((backupContent.length / 1024).toFixed(1))
+            })
+          }
+        })
+      } catch (logError) {
+        console.warn('⚠️ Sistem log yazımı başarısız:', logError)
+      }
+
       return NextResponse.json({
         success: true,
         message: 'GitHub backup başarıyla tamamlandı',

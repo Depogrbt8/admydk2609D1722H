@@ -112,6 +112,14 @@ MAX_FILE_SIZE="5242880"
 ALLOWED_FILE_TYPES="image/jpeg,image/png,image/webp,image/gif,image/svg+xml"
 ```
 
+### GitHub Webhook (Yedek Doğrulama)
+```text
+Webhook URL: /api/database-backup/webhook
+Event: push
+Env: GITHUB_WEBHOOK_SECRET (gerekli), GITHUB_BACKUP_TOKEN (GitHub API fallback için)
+Çalışma: Webhook geldiğinde imza doğrulanır ve son push bilgisi SystemLog'a yazılır (source=backup_github_webhook).
+```
+
 ## 🚀 Production Deployment
 
 ### Deploy Script
