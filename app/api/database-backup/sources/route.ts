@@ -124,7 +124,7 @@ async function checkAllStatuses() {
   return statusChecks
 }
 
-// GitHub repo'dan en son backup dosyasının tarihini çeken fonksiyon
+// GitHub repo'dan en son commit tarihini çeken fonksiyon
 async function getLastBackupDate(): Promise<string> {
   try {
     const githubToken = process.env.GITHUB_BACKUP_TOKEN
@@ -132,8 +132,8 @@ async function getLastBackupDate(): Promise<string> {
       return 'Token yok'
     }
 
-    // GitHub API'den backups klasöründeki dosyaları çek
-    const response = await fetch('https://api.github.com/repos/grbt8yedek/adminhersaat/contents/backups', {
+    // GitHub API'den en son commit'i çek
+    const response = await fetch('https://api.github.com/repos/grbt8yedek/adminhersaat/commits', {
       headers: {
         'Authorization': `token ${githubToken}`,
         'Accept': 'application/vnd.github.v3+json'
@@ -144,80 +144,24 @@ async function getLastBackupDate(): Promise<string> {
       return 'API Hatası'
     }
 
-    const files = await response.json()
-    if (!Array.isArray(files) || files.length === 0) {
-      return 'Backup yok'
+    const commits = await response.json()
+    if (!Array.isArray(commits) || commits.length === 0) {
+      return 'Commit yok'
     }
 
-    // Backup dosyalarını filtrele (admin_backup_ ile başlayanlar)
-    const backupFiles = files.filter(file => 
-      file.type === 'file' && 
-      file.name.startsWith('admin_backup_') && 
-      file.name.endsWith('.json')
-    )
+    // En son commit'i al
+    const latestCommit = commits[0]
 
-    if (backupFiles.length === 0) {
-      return 'Backup dosyası yok'
-    }
+    // Commit tarihini al
+    const commitDate = new Date(latestCommit.commit.committer.date)
 
-    // En son yazılan backup dosyasını bul
-    const latestBackup = backupFiles.sort((a, b) => {
-      const dateA = new Date(a.updated_at || a.created_at).getTime()
-      const dateB = new Date(b.updated_at || b.created_at).getTime()
-      return dateB - dateA
-    })[0]
-
-    // Backup dosyasının içeriğini oku
-    try {
-      const fileResponse = await fetch(latestBackup.download_url, {
-        headers: {
-          'Authorization': `token ${githubToken}`,
-          'Accept': 'application/vnd.github.v3+json'
-        }
-      })
-
-      if (fileResponse.ok) {
-        const fileContent = await fileResponse.json()
-        
-        // Backup dosyasından tarih bilgisini çek
-        if (fileContent.metadata && fileContent.metadata.timestamp) {
-          const backupDate = new Date(fileContent.metadata.timestamp)
-          
-          // Geçersiz tarih kontrolü
-          if (!isNaN(backupDate.getTime())) {
-            const now = new Date()
-            const diffMs = now.getTime() - backupDate.getTime()
-            const diffMinutes = Math.floor(diffMs / (1000 * 60))
-            const diffHours = Math.floor(diffMs / (1000 * 60 * 60))
-            const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24))
-
-            // Avrupa Paris saati ile tam tarih formatı
-            return backupDate.toLocaleString('tr-TR', {
-              year: 'numeric',
-              month: '2-digit',
-              day: '2-digit',
-              hour: '2-digit',
-              minute: '2-digit',
-              timeZone: 'Europe/Paris'
-            })
-          }
-        }
-      }
-    } catch (error) {
-      console.log('Backup dosyası içeriği okunamadı:', error)
-    }
-
-    // Fallback: Dosya tarihini kullan
-    const dateString = latestBackup.updated_at || latestBackup.created_at
-    const backupDate = new Date(dateString)
-    
     // Geçersiz tarih kontrolü
-    if (isNaN(backupDate.getTime())) {
+    if (isNaN(commitDate.getTime())) {
       return 'Tarih hatası'
     }
-    
+
     // Avrupa Paris saati ile tam tarih formatı
-    return backupDate.toLocaleString('tr-TR', {
+    return commitDate.toLocaleString('tr-TR', {
       year: 'numeric',
       month: '2-digit',
       day: '2-digit',
@@ -227,7 +171,7 @@ async function getLastBackupDate(): Promise<string> {
     })
 
   } catch (error) {
-    console.error('GitHub backup dosyası tarihi alınamadı:', error)
+    console.error('GitHub commit tarihi alınamadı:', error)
     return 'Hata'
   }
 }
