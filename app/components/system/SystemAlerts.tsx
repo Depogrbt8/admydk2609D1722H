@@ -245,9 +245,10 @@ export default function SystemAlerts({ className = '' }: SystemAlertProps) {
     return null
   }
 
-  if (alerts.length === 0) {
-    return null
-  }
+  // Debug: Her zaman göster (geçici)
+  // if (alerts.length === 0) {
+  //   return null
+  // }
 
   const criticalCount = alerts.filter(a => a.severity === 'critical').length
   const warningCount = alerts.filter(a => a.severity === 'warning').length
@@ -256,17 +257,24 @@ export default function SystemAlerts({ className = '' }: SystemAlertProps) {
     <>
       {/* Uyarı Badge */}
       <div className={`${className}`}>
-        <button
-          onClick={() => setShowPopup(true)}
-          className={`flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-            criticalCount > 0
-              ? 'bg-red-100 text-red-800 hover:bg-red-200'
-              : 'bg-yellow-100 text-yellow-800 hover:bg-yellow-200'
-          }`}
-        >
-          <AlertTriangle className="h-4 w-4" />
-          <span>Uyarı: {alerts.length}</span>
-        </button>
+        {alerts.length > 0 ? (
+          <button
+            onClick={() => setShowPopup(true)}
+            className={`flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+              criticalCount > 0
+                ? 'bg-red-100 text-red-800 hover:bg-red-200'
+                : 'bg-yellow-100 text-yellow-800 hover:bg-yellow-200'
+            }`}
+          >
+            <AlertTriangle className="h-4 w-4" />
+            <span>Uyarı: {alerts.length}</span>
+          </button>
+        ) : (
+          <div className="flex items-center space-x-2 px-3 py-2 rounded-lg text-sm bg-green-100 text-green-800">
+            <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+            <span>Sistem Normal</span>
+          </div>
+        )}
       </div>
 
       {/* Popup Modal */}
