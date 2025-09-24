@@ -100,14 +100,14 @@ export default function DatabaseBackupSystem() {
         </div>
       </div>
 
-      {/* Kaynak Kartları (Eski tasarıma uygun gri oval kutular) */}
+      {/* Kaynak Kartları (Minimal tasarım) */}
       {sources?.length > 0 && (
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 mb-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3 mb-6">
           {sources.map((s) => (
-            <div key={s.key} className="rounded-3xl bg-gray-200 px-6 py-5 text-center shadow-sm">
-              <div className={`text-lg font-semibold ${s.active ? 'text-green-600' : 'text-red-500'}`}>{s.active ? 'Aktif' : 'Pasif'}</div>
-              <div className="text-2xl font-extrabold text-gray-900 mt-1">{s.title}</div>
-              <div className="text-xl text-gray-800 mt-2">{s.pulledInfo}</div>
+            <div key={s.key} className="rounded-xl bg-gray-200 px-3 py-2 text-center shadow-sm">
+              <div className={`text-xs font-semibold ${s.active ? 'text-green-600' : 'text-red-500'}`}>{s.active ? 'Aktif' : 'Pasif'}</div>
+              <div className="text-sm font-bold text-gray-900 mt-1">{s.title}</div>
+              <div className="text-xs text-gray-800 mt-1">{s.pulledInfo}</div>
             </div>
           ))}
         </div>
