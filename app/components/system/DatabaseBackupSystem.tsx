@@ -98,42 +98,42 @@ export default function DatabaseBackupSystem() {
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-6">
-      <div className="flex items-center justify-between mb-6">
+    <div className="border rounded p-4">
+      <div className="flex items-center justify-between mb-3">
         <div>
-          <h3 className="text-xl font-semibold text-gray-900">🗄️ Database Yedekleme Sistemi</h3>
-          <p className="text-sm text-gray-600 mt-1">Incremental Backup - Her 2 saatte bir otomatik</p>
+          <h3 className="text-base font-semibold text-gray-900">🗄️ Database Yedekleme Sistemi</h3>
+          <p className="text-xs text-gray-500 mt-1">Incremental Backup - Her saatte bir otomatik</p>
         </div>
         <div className="flex items-center space-x-2">
-          <div className={`w-3 h-3 rounded-full ${
+          <div className={`w-2 h-2 rounded-full ${
             status?.isActive ? 'bg-green-500' : 'bg-red-500'
           }`}></div>
-          <span className="text-sm text-gray-600">
+          <span className="text-xs text-gray-500">
             {status?.isActive ? 'Aktif' : 'Pasif'}
           </span>
         </div>
       </div>
 
-      {/* Kaynak Kartları (Minimal tasarım) */}
+      {/* Kaynak Kartları (Monitor tasarımı) */}
       {sources?.length > 0 && (
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3 mb-6">
+        <div className="grid gap-2 md:grid-cols-4 mb-3">
           {sources.map((s) => (
-            <div key={s.key} className="rounded-xl bg-gray-200 px-3 py-2 text-center shadow-sm">
-              <div className={`text-xs font-semibold ${s.active ? 'text-green-600' : 'text-red-500'}`}>{s.active ? 'Aktif' : 'Pasif'}</div>
-              <div className="text-sm font-bold text-gray-900 mt-1">{s.title}</div>
-              <div className="text-xs text-gray-800 mt-1">{s.pulledInfo}</div>
+            <div key={s.key} className={`border rounded p-2 ${s.active ? 'border-green-300' : 'border-red-300'}`}>
+              <div className={`text-[10px] text-gray-500 ${s.active ? 'text-green-600' : 'text-red-500'}`}>{s.active ? 'Aktif' : 'Pasif'}</div>
+              <div className="text-sm font-semibold text-gray-900">{s.title}</div>
+              <div className="text-[10px] text-gray-500">{s.pulledInfo}</div>
             </div>
           ))}
         </div>
       )}
       {/* Güvenlik Bölümü */}
       {security && (
-        <div className="mt-6 bg-gray-50 rounded-lg p-4 border border-gray-200">
-          <div className="flex items-center justify-between mb-3">
-            <h4 className="text-lg font-semibold text-gray-900 flex items-center">
+        <div className="border rounded p-3">
+          <div className="flex items-center justify-between mb-2">
+            <h4 className="text-sm font-medium text-gray-900">
               🛡️ Güvenlik Durumu
             </h4>
-            <div className={`text-sm px-2 py-1 rounded-full ${
+            <div className={`text-xs px-2 py-0.5 rounded ${
               security.overallScore >= 90 ? 'bg-green-100 text-green-700' :
               security.overallScore >= 70 ? 'bg-yellow-100 text-yellow-700' :
               'bg-red-100 text-red-700'
@@ -142,49 +142,49 @@ export default function DatabaseBackupSystem() {
             </div>
           </div>
           
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          <div className="grid gap-2 md:grid-cols-4">
             {/* Aktif Saldırılar */}
-            <div className="bg-white rounded-lg p-3 border">
+            <div className={`border rounded p-2 ${security.realTimeThreats?.activeAttacks > 5 ? 'border-red-300' : 'border-gray-200'}`}>
               <div className="flex items-center justify-between">
-                <div className="text-xs text-gray-600">Aktif Saldırı</div>
+                <div className="text-[10px] text-gray-500">Aktif Saldırı</div>
                 {security.realTimeThreats?.activeAttacks > 5 && (
-                  <span className="text-red-500 text-xs">⚠️</span>
+                  <span className="text-red-500 text-[10px]">⚠️</span>
                 )}
               </div>
-              <div className="text-lg font-bold text-gray-900">
+              <div className="text-sm font-semibold text-gray-900">
                 {security.realTimeThreats?.activeAttacks || 0}
               </div>
             </div>
 
             {/* Engellenen İstekler */}
-            <div className="bg-white rounded-lg p-3 border">
+            <div className={`border rounded p-2 ${security.realTimeThreats?.blockedRequests > 500 ? 'border-red-300' : 'border-gray-200'}`}>
               <div className="flex items-center justify-between">
-                <div className="text-xs text-gray-600">Engellenen</div>
+                <div className="text-[10px] text-gray-500">Engellenen</div>
                 {security.realTimeThreats?.blockedRequests > 500 && (
-                  <span className="text-yellow-500 text-xs">⚠️</span>
+                  <span className="text-yellow-500 text-[10px]">⚠️</span>
                 )}
               </div>
-              <div className="text-lg font-bold text-gray-900">
+              <div className="text-sm font-semibold text-gray-900">
                 {security.realTimeThreats?.blockedRequests || 0}
               </div>
             </div>
 
             {/* Rate Limit */}
-            <div className="bg-white rounded-lg p-3 border">
+            <div className={`border rounded p-2 ${security.rateLimitingStatus?.blockedRequests > 100 ? 'border-red-300' : 'border-gray-200'}`}>
               <div className="flex items-center justify-between">
-                <div className="text-xs text-gray-600">Rate Limit</div>
+                <div className="text-[10px] text-gray-500">Rate Limit</div>
                 {security.rateLimitingStatus?.blockedRequests > 100 && (
-                  <span className="text-orange-500 text-xs">⚠️</span>
+                  <span className="text-orange-500 text-[10px]">⚠️</span>
                 )}
               </div>
-              <div className="text-lg font-bold text-gray-900">
+              <div className="text-sm font-semibold text-gray-900">
                 {security.rateLimitingStatus?.blockedRequests || 0}
               </div>
             </div>
 
             {/* Son Tehdit */}
-            <div className="bg-white rounded-lg p-3 border">
-              <div className="text-xs text-gray-600">Son Tehdit</div>
+            <div className="border rounded p-2 border-gray-200">
+              <div className="text-[10px] text-gray-500">Son Tehdit</div>
               <div className="text-sm font-semibold text-gray-900 truncate">
                 {security.realTimeThreats?.lastThreat || 'Yok'}
               </div>
@@ -192,7 +192,7 @@ export default function DatabaseBackupSystem() {
           </div>
 
           {/* Durum Mesajı */}
-          <div className="mt-3 text-xs text-gray-600 text-center">
+          <div className="mt-2 text-[10px] text-gray-500 text-center">
             {security.message || 'Güvenlik sistemleri izleniyor'}
           </div>
         </div>

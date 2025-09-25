@@ -22,7 +22,7 @@ export default function SistemPage() {
 
         {/* Ana İçerik */}
         <main className="flex-1 p-4 w-full overflow-y-auto scroll-smooth">
-          <div className="max-w-7xl mx-auto space-y-6">
+          <div className="max-w-7xl mx-auto space-y-3">
             {/* Sistem Uyarıları */}
             <SystemAlerts className="flex justify-end" />
             

@@ -134,18 +134,18 @@ export default function MainSiteStatus() {
   }
 
   return (
-    <div className="bg-white rounded-lg shadow p-4 lg:p-6 w-full">
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center space-x-2">
-          <Globe className="h-5 w-5 text-blue-600" />
-          <h3 className="text-lg font-semibold text-gray-900">Ana Site Durumu</h3>
+    <div className="border rounded p-4">
+      <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center space-x-1">
+          <Globe className="h-4 w-4 text-blue-600" />
+          <h3 className="text-base font-semibold text-gray-900">Ana Site Durumu</h3>
         </div>
         <button 
           onClick={handleRefresh}
           disabled={refreshing}
-          className="flex items-center space-x-2 px-3 py-2 text-sm bg-blue-50 text-blue-700 rounded-md hover:bg-blue-100 disabled:opacity-50"
+          className="flex items-center space-x-2 px-2 py-1 text-xs bg-blue-50 text-blue-700 rounded hover:bg-blue-100 disabled:opacity-50"
         >
-          <RefreshCw className={`h-4 w-4 ${refreshing ? 'animate-spin' : ''}`} />
+          <RefreshCw className={`h-3 w-3 ${refreshing ? 'animate-spin' : ''}`} />
           <span>Yenile</span>
         </button>
       </div>
@@ -161,12 +161,12 @@ export default function MainSiteStatus() {
 
       {/* Ana Site Özet */}
       {metrics && health && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-4 mb-4">
-          <div className="border rounded-lg p-3">
+        <div className="grid gap-2 md:grid-cols-6 mb-3">
+          <div className={`border rounded p-2 ${health.metrics.cpuUsage < 60 ? 'border-green-300' : health.metrics.cpuUsage < 80 ? 'border-yellow-300' : 'border-red-300'}`}>
             <div className="flex items-center justify-between mb-1">
-              <div className="flex items-center space-x-2">
-                <Cpu className="h-4 w-4 text-gray-600" />
-                <span className="text-sm font-medium">CPU</span>
+              <div className="flex items-center space-x-1">
+                <Cpu className="h-3 w-3 text-gray-600" />
+                <span className="text-xs font-medium">CPU</span>
               </div>
               {chip(
                 health.metrics.cpuUsage < 60 ? 'green' : 
@@ -175,11 +175,11 @@ export default function MainSiteStatus() {
                 health.metrics.cpuUsage < 80 ? 'Orta' : 'Yüksek'
               )}
             </div>
-            <div className="text-sm text-gray-700">%{Math.round(health.metrics.cpuUsage)}</div>
-            <div className="text-xs text-gray-500">Çekirdek: {metrics.cpu.cores}</div>
-            <div className="w-full bg-gray-200 rounded-full h-1.5 mt-2">
+            <div className="text-sm font-semibold text-gray-900">%{Math.round(health.metrics.cpuUsage)}</div>
+            <div className="text-[10px] text-gray-500">Çekirdek: {metrics.cpu.cores}</div>
+            <div className="w-full bg-gray-200 rounded-full h-1 mt-1">
               <div 
-                className={`h-1.5 rounded-full ${
+                className={`h-1 rounded-full ${
                   health.metrics.cpuUsage < 60 ? 'bg-green-500' : 
                   health.metrics.cpuUsage < 80 ? 'bg-yellow-500' : 'bg-red-500'
                 }`}
@@ -188,11 +188,11 @@ export default function MainSiteStatus() {
             </div>
           </div>
 
-          <div className="border rounded-lg p-3">
+          <div className={`border rounded p-2 ${health.metrics.memoryUsage < 80 ? 'border-green-300' : health.metrics.memoryUsage < 90 ? 'border-yellow-300' : 'border-red-300'}`}>
             <div className="flex items-center justify-between mb-1">
-              <div className="flex items-center space-x-2">
-                <Activity className="h-4 w-4 text-gray-600" />
-                <span className="text-sm font-medium">Bellek</span>
+              <div className="flex items-center space-x-1">
+                <Activity className="h-3 w-3 text-gray-600" />
+                <span className="text-xs font-medium">Bellek</span>
               </div>
               {chip(
                 health.metrics.memoryUsage < 80 ? 'green' : 
@@ -201,11 +201,11 @@ export default function MainSiteStatus() {
                 health.metrics.memoryUsage < 90 ? 'Orta' : 'Yüksek'
               )}
             </div>
-            <div className="text-sm text-gray-700">%{Math.round(health.metrics.memoryUsage)}</div>
-            <div className="text-xs text-gray-500">{formatBytes(metrics.memory.used)} / {formatBytes(metrics.memory.total)}</div>
-            <div className="w-full bg-gray-200 rounded-full h-1.5 mt-2">
+            <div className="text-sm font-semibold text-gray-900">%{Math.round(health.metrics.memoryUsage)}</div>
+            <div className="text-[10px] text-gray-500">{formatBytes(metrics.memory.used)} / {formatBytes(metrics.memory.total)}</div>
+            <div className="w-full bg-gray-200 rounded-full h-1 mt-1">
               <div 
-                className={`h-1.5 rounded-full ${
+                className={`h-1 rounded-full ${
                   health.metrics.memoryUsage < 80 ? 'bg-green-500' : 
                   health.metrics.memoryUsage < 90 ? 'bg-yellow-500' : 'bg-red-500'
                 }`}
@@ -214,11 +214,11 @@ export default function MainSiteStatus() {
             </div>
           </div>
 
-          <div className="border rounded-lg p-3">
+          <div className={`border rounded p-2 ${health.metrics.diskUsage < 85 ? 'border-green-300' : health.metrics.diskUsage < 95 ? 'border-yellow-300' : 'border-red-300'}`}>
             <div className="flex items-center justify-between mb-1">
-              <div className="flex items-center space-x-2">
-                <HardDrive className="h-4 w-4 text-gray-600" />
-                <span className="text-sm font-medium">Disk</span>
+              <div className="flex items-center space-x-1">
+                <HardDrive className="h-3 w-3 text-gray-600" />
+                <span className="text-xs font-medium">Disk</span>
               </div>
               {chip(
                 health.metrics.diskUsage < 85 ? 'green' : 
@@ -227,11 +227,11 @@ export default function MainSiteStatus() {
                 health.metrics.diskUsage < 95 ? 'Orta' : 'Yüksek'
               )}
             </div>
-            <div className="text-sm text-gray-700">%{Math.round(health.metrics.diskUsage)}</div>
-            <div className="text-xs text-gray-500">DB: {formatBytes(metrics.disk.dbSize)}</div>
-            <div className="w-full bg-gray-200 rounded-full h-1.5 mt-2">
+            <div className="text-sm font-semibold text-gray-900">%{Math.round(health.metrics.diskUsage)}</div>
+            <div className="text-[10px] text-gray-500">DB: {formatBytes(metrics.disk.dbSize)}</div>
+            <div className="w-full bg-gray-200 rounded-full h-1 mt-1">
               <div 
-                className={`h-1.5 rounded-full ${
+                className={`h-1 rounded-full ${
                   health.metrics.diskUsage < 85 ? 'bg-green-500' : 
                   health.metrics.diskUsage < 95 ? 'bg-yellow-500' : 'bg-red-500'
                 }`}
@@ -240,11 +240,11 @@ export default function MainSiteStatus() {
             </div>
           </div>
 
-          <div className="border rounded-lg p-3">
+          <div className={`border rounded p-2 ${health.metrics.loadAverage < 1 ? 'border-green-300' : health.metrics.loadAverage < 2 ? 'border-yellow-300' : 'border-red-300'}`}>
             <div className="flex items-center justify-between mb-1">
-              <div className="flex items-center space-x-2">
-                <Gauge className="h-4 w-4 text-gray-600" />
-                <span className="text-sm font-medium">Sistem Yükü</span>
+              <div className="flex items-center space-x-1">
+                <Gauge className="h-3 w-3 text-gray-600" />
+                <span className="text-xs font-medium">Sistem Yükü</span>
               </div>
               {chip(
                 health.metrics.loadAverage < 1 ? 'green' : 
@@ -253,46 +253,46 @@ export default function MainSiteStatus() {
                 health.metrics.loadAverage < 2 ? 'Orta' : 'Yüksek'
               )}
             </div>
-            <div className="text-sm text-gray-700">{health.metrics.loadAverage.toFixed(2)}</div>
-            <div className="text-xs text-gray-500">Ortalama yük</div>
+            <div className="text-sm font-semibold text-gray-900">{health.metrics.loadAverage.toFixed(2)}</div>
+            <div className="text-[10px] text-gray-500">Ortalama yük</div>
           </div>
 
-          <div className="border rounded-lg p-3">
+          <div className={`border rounded p-2 ${metrics.serverStatus === 'active' ? 'border-green-300' : 'border-red-300'}`}>
             <div className="flex items-center justify-between mb-1">
-              <div className="flex items-center space-x-2">
-                <Network className="h-4 w-4 text-gray-600" />
-                <span className="text-sm font-medium">Sunucu</span>
+              <div className="flex items-center space-x-1">
+                <Network className="h-3 w-3 text-gray-600" />
+                <span className="text-xs font-medium">Sunucu</span>
               </div>
               {chip(
                 metrics.serverStatus === 'active' ? 'green' : 'red',
                 metrics.serverStatus === 'active' ? 'Aktif' : 'Pasif'
               )}
             </div>
-            <div className="text-sm text-gray-700">{metrics.hostname}</div>
-            <div className="text-xs text-gray-500">{metrics.platform} {metrics.arch}</div>
+            <div className="text-sm font-semibold text-gray-900">{metrics.hostname}</div>
+            <div className="text-[10px] text-gray-500">{metrics.platform} {metrics.arch}</div>
           </div>
 
-          <div className="border rounded-lg p-3">
+          <div className="border rounded p-2 border-gray-200">
             <div className="flex items-center justify-between mb-1">
-              <div className="flex items-center space-x-2">
-                <Clock className="h-4 w-4 text-gray-600" />
-                <span className="text-sm font-medium">Çalışma Süresi</span>
+              <div className="flex items-center space-x-1">
+                <Clock className="h-3 w-3 text-gray-600" />
+                <span className="text-xs font-medium">Çalışma Süresi</span>
               </div>
               {chip('green', 'Aktif')}
             </div>
-            <div className="text-sm text-gray-700">{formatUptime(metrics.uptime)}</div>
-            <div className="text-xs text-gray-500">v{metrics.version}</div>
+            <div className="text-sm font-semibold text-gray-900">{formatUptime(metrics.uptime)}</div>
+            <div className="text-[10px] text-gray-500">v{metrics.version}</div>
           </div>
         </div>
       )}
 
       {/* Veritabanı Durumu */}
       {metrics && (
-        <div className="mb-4 p-4 rounded-lg border">
-          <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center space-x-2">
-              <Server className="h-5 w-5 text-gray-700" />
-              <span className="text-sm font-semibold text-gray-900">Veritabanı Durumu</span>
+        <div className="border rounded p-3 mb-3">
+          <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center space-x-1">
+              <Server className="h-4 w-4 text-gray-700" />
+              <span className="text-sm font-medium text-gray-900">Veritabanı Durumu</span>
             </div>
             {chip(
               metrics.database.status === 'connected' ? 'green' : 'red',
@@ -300,18 +300,18 @@ export default function MainSiteStatus() {
             )}
           </div>
           
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-sm">
             <div className="flex justify-between">
-              <span className="text-gray-600">Kullanıcılar:</span>
-              <span className="font-medium">{metrics.database.userCount}</span>
+              <span className="text-gray-500 text-xs">Kullanıcılar:</span>
+              <span className="font-medium text-sm">{metrics.database.userCount}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-gray-600">Rezervasyonlar:</span>
-              <span className="font-medium">{metrics.database.reservationCount}</span>
+              <span className="text-gray-500 text-xs">Rezervasyonlar:</span>
+              <span className="font-medium text-sm">{metrics.database.reservationCount}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-gray-600">Ödemeler:</span>
-              <span className="font-medium">{metrics.database.paymentCount}</span>
+              <span className="text-gray-500 text-xs">Ödemeler:</span>
+              <span className="font-medium text-sm">{metrics.database.paymentCount}</span>
             </div>
           </div>
         </div>
@@ -319,11 +319,11 @@ export default function MainSiteStatus() {
 
       {/* Genel Sağlık */}
       {health && (
-        <div className="mb-4 p-4 rounded-lg border">
-          <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center space-x-2">
-              <Server className="h-5 w-5 text-gray-700" />
-              <span className="text-sm font-semibold text-gray-900">Ana Site Sağlığı</span>
+        <div className="border rounded p-3 mb-3">
+          <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center space-x-1">
+              <Server className="h-4 w-4 text-gray-700" />
+              <span className="text-sm font-medium text-gray-900">Ana Site Sağlığı</span>
             </div>
             {chip(
               health.score >= 80 ? 'green' : 
@@ -338,8 +338,8 @@ export default function MainSiteStatus() {
           
           {health.issues.length > 0 && (
             <div className="text-sm">
-              <div className="text-gray-600 mb-1">Tespit Edilen Sorunlar:</div>
-              <ul className="list-disc list-inside text-xs text-gray-600 space-y-1">
+              <div className="text-gray-500 mb-1 text-xs">Tespit Edilen Sorunlar:</div>
+              <ul className="list-disc list-inside text-[10px] text-gray-500 space-y-1">
                 {health.issues.map((issue, i) => (
                   <li key={i}>{issue}</li>
                 ))}
@@ -350,7 +350,7 @@ export default function MainSiteStatus() {
       )}
 
       {/* Zaman damgası */}
-      <div className="text-xs text-gray-500">
+      <div className="text-[10px] text-gray-500">
         Son güncelleme: {metrics ? new Date(metrics.lastUpdate).toLocaleString('tr-TR') : '-'}
       </div>
     </div>

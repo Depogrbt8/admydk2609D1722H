@@ -260,18 +260,18 @@ export default function SystemAlerts({ className = '' }: SystemAlertProps) {
         {alerts.length > 0 ? (
           <button
             onClick={() => setShowPopup(true)}
-            className={`flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+            className={`flex items-center space-x-1 px-2 py-1 rounded text-xs font-medium transition-colors ${
               criticalCount > 0
                 ? 'bg-red-100 text-red-800 hover:bg-red-200'
                 : 'bg-yellow-100 text-yellow-800 hover:bg-yellow-200'
             }`}
           >
-            <AlertTriangle className="h-4 w-4" />
+            <AlertTriangle className="h-3 w-3" />
             <span>Uyarı: {alerts.length}</span>
           </button>
         ) : (
-          <div className="flex items-center space-x-2 px-3 py-2 rounded-lg text-sm bg-green-100 text-green-800">
-            <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+          <div className="flex items-center space-x-1 px-2 py-1 rounded text-xs bg-green-100 text-green-800">
+            <div className="w-1.5 h-1.5 bg-green-500 rounded-full"></div>
             <span>Sistem Normal</span>
           </div>
         )}
@@ -279,12 +279,12 @@ export default function SystemAlerts({ className = '' }: SystemAlertProps) {
 
       {/* Popup Modal */}
       {showPopup && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[80vh] overflow-hidden">
-            <div className="flex items-center justify-between p-4 border-b">
-              <div className="flex items-center space-x-2">
-                <AlertTriangle className={`h-5 w-5 ${criticalCount > 0 ? 'text-red-600' : 'text-yellow-600'}`} />
-                <h3 className="text-lg font-semibold text-gray-900">
+        <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded shadow border w-full max-w-sm max-h-[80vh] overflow-hidden">
+            <div className="flex items-center justify-between p-3 border-b">
+              <div className="flex items-center space-x-1">
+                <AlertTriangle className={`h-4 w-4 ${criticalCount > 0 ? 'text-red-600' : 'text-yellow-600'}`} />
+                <h3 className="text-sm font-semibold text-gray-900">
                   Sistem Uyarıları ({alerts.length})
                 </h3>
               </div>
@@ -292,31 +292,31 @@ export default function SystemAlerts({ className = '' }: SystemAlertProps) {
                 onClick={() => setShowPopup(false)}
                 className="text-gray-400 hover:text-gray-600"
               >
-                <X className="h-5 w-5" />
+                <X className="h-4 w-4" />
               </button>
             </div>
 
-            <div className="p-4 max-h-96 overflow-y-auto">
-              <div className="space-y-3">
+            <div className="p-3 max-h-96 overflow-y-auto">
+              <div className="space-y-2">
                 {alerts.map((alert, index) => (
                   <div
                     key={index}
-                    className={`p-3 rounded-lg border-l-4 ${
+                    className={`p-2 rounded border-l-4 ${
                       alert.severity === 'critical'
                         ? 'border-red-500 bg-red-50'
                         : 'border-yellow-500 bg-yellow-50'
                     }`}
                   >
                     <div className="flex items-center justify-between mb-1">
-                      <div className="flex items-center space-x-2">
-                        <span className="font-medium text-gray-900">
+                      <div className="flex items-center space-x-1">
+                        <span className="font-medium text-gray-900 text-sm">
                           {alert.component}
                         </span>
-                        <span className="text-sm text-gray-600">
+                        <span className="text-xs text-gray-600">
                           → {alert.metric}
                         </span>
                       </div>
-                      <span className={`px-2 py-1 rounded text-xs font-medium ${
+                      <span className={`px-1 py-0.5 rounded text-[10px] font-medium ${
                         alert.severity === 'critical'
                           ? 'bg-red-100 text-red-800'
                           : 'bg-yellow-100 text-yellow-800'
@@ -324,10 +324,10 @@ export default function SystemAlerts({ className = '' }: SystemAlertProps) {
                         {alert.severity === 'critical' ? 'Kritik' : 'Uyarı'}
                       </span>
                     </div>
-                    <div className="text-sm text-gray-700 mb-2">
+                    <div className="text-xs text-gray-700 mb-1">
                       {alert.message}
                     </div>
-                    <div className="text-xs text-gray-500">
+                    <div className="text-[10px] text-gray-500">
                       Değer: {alert.value} | Eşik: {alert.threshold}
                     </div>
                   </div>
@@ -335,8 +335,8 @@ export default function SystemAlerts({ className = '' }: SystemAlertProps) {
               </div>
             </div>
 
-            <div className="p-4 border-t bg-gray-50">
-              <div className="flex items-center justify-between text-sm text-gray-600">
+            <div className="p-3 border-t bg-gray-50">
+              <div className="flex items-center justify-between text-xs text-gray-600">
                 <span>
                   {criticalCount > 0 && `${criticalCount} kritik`}
                   {criticalCount > 0 && warningCount > 0 && ', '}
@@ -345,7 +345,7 @@ export default function SystemAlerts({ className = '' }: SystemAlertProps) {
                 <button
                   onClick={checkSystemRisks}
                   disabled={loading}
-                  className="text-blue-600 hover:text-blue-800 disabled:opacity-50"
+                  className="text-blue-600 hover:text-blue-800 disabled:opacity-50 text-xs"
                 >
                   {loading ? 'Kontrol ediliyor...' : 'Yenile'}
                 </button>
