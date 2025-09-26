@@ -25,14 +25,14 @@ model User {
   isForeigner      Boolean          @default(false)
   emailVerified    DateTime?
   image            String?
+  resetToken       String?
+  resetTokenExpiry DateTime?
   createdAt        DateTime         @default(now())
   updatedAt        DateTime         @updatedAt
   lastLoginAt      DateTime?
   status           String           @default("active")
   role             String           @default("user")
   canDelete        Boolean          @default(true)
-  resetToken       String?
-  resetTokenExpiry DateTime?
   accounts         Account[]
   billingInfos     BillingInfo[]
   campaigns        Campaign[]
@@ -267,51 +267,40 @@ model EmailQueue {
 }
 
 model EmailLog {
-  id                String         @id @default(cuid())
-  
-  // Email Bilgileri
-  emailId           String?        // Resend message ID
-  recipientEmail    String         // Eski: recipient
-  recipientName     String?
-  cc                String?
-  bcc               String?
-  subject           String
-  content           String?
-  templateId        String?
-  templateName      String?
-  
-  // Durum
-  status            String         // sent, delivered, bounced, failed, opened, clicked
-  sentAt            DateTime       @default(now())
-  deliveredAt       DateTime?
-  openedAt          DateTime?
-  clickedAt         DateTime?
-  bouncedAt         DateTime?
-  
-  // Hata Bilgileri
-  bounceReason      String?
-  errorMessage      String?
-  
-  // İlişkiler
-  campaignId        String?
-  userId            String?
-  user              User?          @relation(fields: [userId], references: [id], onDelete: SetNull)
-  template          EmailTemplate? @relation(fields: [templateId], references: [id])
-  
-  // Teknik Bilgiler
-  ipAddress         String?
-  userAgent         String?
-  trackingId        String?
-  openCount         Int            @default(0)
-  clickCount        Int            @default(0)
-  bounceCount       Int            @default(0)
-  spamScore         Float?
-  deliveryTime      Int?           // milliseconds
-  retryCount        Int            @default(0)
-  
-  createdAt         DateTime       @default(now())
-  updatedAt         DateTime       @updatedAt
-  
+  id             String         @id @default(cuid())
+  cc             String?
+  bcc            String?
+  subject        String
+  content        String?
+  templateId     String?
+  status         String
+  sentAt         DateTime       @default(now())
+  deliveredAt    DateTime?
+  openedAt       DateTime?
+  clickedAt      DateTime?
+  bouncedAt      DateTime?
+  errorMessage   String?
+  ipAddress      String?
+  userAgent      String?
+  trackingId     String?
+  bounceCount    Int            @default(0)
+  bounceReason   String?
+  campaignId     String?
+  clickCount     Int            @default(0)
+  createdAt      DateTime       @default(now())
+  deliveryTime   Int?
+  emailId        String?
+  openCount      Int            @default(0)
+  recipientEmail String
+  recipientName  String?
+  retryCount     Int            @default(0)
+  spamScore      Float?
+  templateName   String?
+  updatedAt      DateTime       @updatedAt
+  userId         String?
+  template       EmailTemplate? @relation(fields: [templateId], references: [id])
+  user           User?          @relation(fields: [userId], references: [id])
+
   @@index([recipientEmail])
   @@index([status])
   @@index([sentAt])
@@ -355,28 +344,28 @@ model BillingInfo {
 }
 
 model SeoSettings {
-  id                    String   @id @default(cuid())
-  siteTitle             String
-  siteDescription       String
-  keywords              String
-  canonicalUrl          String
-  ogTitle               String?
-  ogDescription         String?
-  ogImage               String?
-  twitterCard           String?
-  facebookUrl           String?
-  twitterUrl            String?
-  instagramUrl          String?
-  robotsIndex           Boolean  @default(true)
-  robotsFollow          Boolean  @default(true)
-  googleVerification    String?
-  yandexVerification    String?
-  organizationName      String?
+  id                      String   @id @default(cuid())
+  siteTitle               String
+  siteDescription         String
+  keywords                String
+  canonicalUrl            String
+  ogTitle                 String?
+  ogDescription           String?
+  ogImage                 String?
+  twitterCard             String?
+  facebookUrl             String?
+  twitterUrl              String?
+  instagramUrl            String?
+  robotsIndex             Boolean  @default(true)
+  robotsFollow            Boolean  @default(true)
+  googleVerification      String?
+  yandexVerification      String?
+  organizationName        String?
   organizationDescription String?
-  organizationLogo      String?
-  organizationUrl       String?
-  organizationPhone     String?
-  organizationFounded   String?
-  createdAt             DateTime @default(now())
-  updatedAt             DateTime @updatedAt
+  organizationLogo        String?
+  organizationUrl         String?
+  organizationPhone       String?
+  organizationFounded     String?
+  createdAt               DateTime @default(now())
+  updatedAt               DateTime @updatedAt
 }
