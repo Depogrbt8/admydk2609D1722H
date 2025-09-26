@@ -1,23 +1,47 @@
 'use client'
 
 import { useState } from 'react'
-import { Eye, EyeOff, LogIn } from 'lucide-react'
+import { Eye, EyeOff, LogIn, AlertCircle } from 'lucide-react'
 
 export default function LoginPage() {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState('')
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
+    setError('')
     
-    // Direkt giriş - kontrol yok
-    setTimeout(() => {
-      window.location.href = '/dashboard'
+    try {
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username, password }),
+      })
+
+      const data = await response.json()
+
+      if (data.success) {
+        // Token'ı localStorage'a kaydet
+        localStorage.setItem('auth-token', data.token)
+        localStorage.setItem('user', JSON.stringify(data.user))
+        
+        // Dashboard'a yönlendir
+        window.location.href = '/dashboard'
+      } else {
+        setError(data.error || 'Giriş başarısız')
+      }
+    } catch (error) {
+      console.error('Login hatası:', error)
+      setError('Bağlantı hatası. Lütfen tekrar deneyin.')
+    } finally {
       setIsLoading(false)
-    }, 500)
+    }
   }
 
   return (
@@ -26,7 +50,16 @@ export default function LoginPage() {
         {/* Logo */}
         <div className="text-center">
           <h2 className="admin-text-lg mb-2">Grbt8 AP</h2>
+          <p className="text-sm text-gray-500">Admin Panel Girişi</p>
         </div>
+
+        {/* Hata mesajı */}
+        {error && (
+          <div className="bg-red-50 border border-red-200 rounded-lg p-3 flex items-center space-x-2">
+            <AlertCircle className="h-4 w-4 text-red-500" />
+            <span className="text-sm text-red-700">{error}</span>
+          </div>
+        )}
 
         {/* Giriş Formu */}
         <form className="mt-3 admin-space-y-3" onSubmit={handleLogin}>
@@ -44,7 +77,7 @@ export default function LoginPage() {
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-500"
-                placeholder="Kullanıcı Adı"
+                placeholder="Email veya Kullanıcı Adı"
               />
             </div>
 
@@ -95,6 +128,12 @@ export default function LoginPage() {
             </button>
           </div>
 
+          {/* Demo bilgileri */}
+          <div className="text-center text-xs text-gray-400 mt-4 p-2 bg-gray-50 rounded">
+            <p><strong>Demo Giriş:</strong></p>
+            <p>📧 admin@grbt8.store</p>
+            <p>🔑 Admin123!</p>
+          </div>
         </form>
       </div>
     </div>
