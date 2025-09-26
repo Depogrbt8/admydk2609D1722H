@@ -1,0 +1,12 @@
+{
+  "timestamp": "2025-09-26T15:34:45.818Z",
+  "note": "Environment variables production ortamından alınmalıdır",
+  "required_variables": [
+    "DATABASE_URL",
+    "NEXTAUTH_SECRET",
+    "NEXTAUTH_URL",
+    "RESEND_API_KEY",
+    "GITHUB_TOKEN",
+    "GITLAB_TOKEN"
+  ]
+}
