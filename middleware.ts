@@ -4,7 +4,7 @@ import type { NextRequest } from 'next/server'
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
 
-  // Admin paneli veya ilgili rotalar için kontrol
+  // Admin paneli veya ilgili rotalar için kontrol (API rotaları hariç)
   if (
     pathname.startsWith('/admin') ||
     pathname.startsWith('/ayarlar') ||
@@ -18,8 +18,7 @@ export function middleware(request: NextRequest) {
     pathname.startsWith('/istatistikler') ||
     pathname.startsWith('/rezervasyonlar') ||
     pathname.startsWith('/ucuslar') ||
-    pathname.startsWith('/odemeler') ||
-    pathname.startsWith('/api/')
+    pathname.startsWith('/odemeler')
   ) {
     const response = NextResponse.next()
 
