@@ -5,7 +5,10 @@ import jwt from 'jsonwebtoken'
 
 export async function POST(request: NextRequest) {
   try {
+    console.log('Login API çağrıldı')
+    
     const { username, password } = await request.json()
+    console.log('Username:', username)
 
     if (!username || !password) {
       return NextResponse.json(
@@ -26,6 +29,8 @@ export async function POST(request: NextRequest) {
       }
     })
 
+    console.log('User bulundu:', user ? 'Evet' : 'Hayır')
+
     if (!user) {
       console.log('Kullanıcı bulunamadı:', username)
       return NextResponse.json(
@@ -36,6 +41,7 @@ export async function POST(request: NextRequest) {
 
     // Şifre kontrolü
     const isPasswordValid = await bcrypt.compare(password, user.password)
+    console.log('Şifre geçerli:', isPasswordValid)
     
     if (!isPasswordValid) {
       console.log('Yanlış şifre:', username)
@@ -64,7 +70,6 @@ export async function POST(request: NextRequest) {
       data: { lastLoginAt: new Date() }
     })
 
-    // Başarılı giriş logu
     console.log('Başarılı admin girişi:', username)
 
     const response = NextResponse.json({
