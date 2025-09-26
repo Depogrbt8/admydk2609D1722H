@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/app/lib/prisma'
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
-import { createLog } from '@/app/lib/logger'
 
 export async function POST(request: NextRequest) {
   try {
@@ -28,13 +27,7 @@ export async function POST(request: NextRequest) {
     })
 
     if (!user) {
-      await createLog({
-        level: 'WARNING',
-        message: 'Başarısız giriş denemesi - kullanıcı bulunamadı',
-        source: 'auth/login',
-        metadata: JSON.stringify({ username })
-      })
-
+      console.log('Kullanıcı bulunamadı:', username)
       return NextResponse.json(
         { success: false, error: 'Kullanıcı adı veya şifre hatalı' },
         { status: 401 }
@@ -45,14 +38,7 @@ export async function POST(request: NextRequest) {
     const isPasswordValid = await bcrypt.compare(password, user.password)
     
     if (!isPasswordValid) {
-      await createLog({
-        level: 'WARNING',
-        message: 'Başarısız giriş denemesi - yanlış şifre',
-        source: 'auth/login',
-        userId: user.id,
-        metadata: JSON.stringify({ username })
-      })
-
+      console.log('Yanlış şifre:', username)
       return NextResponse.json(
         { success: false, error: 'Kullanıcı adı veya şifre hatalı' },
         { status: 401 }
@@ -79,13 +65,7 @@ export async function POST(request: NextRequest) {
     })
 
     // Başarılı giriş logu
-    await createLog({
-      level: 'INFO',
-      message: 'Başarılı admin girişi',
-      source: 'auth/login',
-      userId: user.id,
-      metadata: JSON.stringify({ username })
-    })
+    console.log('Başarılı admin girişi:', username)
 
     const response = NextResponse.json({
       success: true,
@@ -111,18 +91,6 @@ export async function POST(request: NextRequest) {
 
   } catch (error) {
     console.error('Login hatası:', error)
-    
-    try {
-      await createLog({
-        level: 'ERROR',
-        message: 'Login API hatası',
-        source: 'auth/login',
-        metadata: JSON.stringify({ error: error instanceof Error ? error.message : 'Bilinmeyen hata' })
-      })
-    } catch (logError) {
-      console.error('Log hatası:', logError)
-    }
-
     return NextResponse.json(
       { success: false, error: 'Sunucu hatası' },
       { status: 500 }
