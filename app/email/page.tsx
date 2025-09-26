@@ -276,754 +276,755 @@ export default function EmailPage() {
   }
 
   return (
-    <div className="flex h-screen bg-gray-50">
+    <div className="admin-page-container">
       <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
-      <div className="flex-1 flex flex-col overflow-hidden">
+      <div className="admin-main-content">
         <Header />
-        
-        <div className="flex-1 overflow-auto">
-          <div className="p-6">
-            <div className="max-w-7xl mx-auto">
-              {/* Page Header */}
-              <div className="mb-6">
-                <h1 className="text-2xl font-bold text-gray-900 flex items-center">
-                  <Mail className="h-6 w-6 mr-2" />
-                  Email Yönetimi
-                </h1>
-                <p className="text-gray-600 mt-1">Email gönderimi ve template yönetimi</p>
-              </div>
+        <div className="admin-content-wrapper">
+          {/* Page Header */}
+          <div className="mb-6">
+            <h1 className="admin-text-lg flex items-center space-x-1">
+              <Mail className="h-4 w-4" />
+              <span>Email Yönetimi</span>
+            </h1>
+            <p className="admin-text-xs">Email gönderimi ve template yönetimi</p>
+          </div>
 
-              {/* Tab Navigation */}
-              <div className="mb-6">
-                <nav className="flex space-x-8">
-                  {[
-                    { id: 'dashboard', name: 'Dashboard', icon: BarChart3 },
-                    { id: 'send', name: 'Email Gönder', icon: Send },
-                    { id: 'templates', name: 'Template\'ler', icon: FileText },
-                    { id: 'logs', name: 'Loglar', icon: FileText },
-                    { id: 'queue', name: 'Kuyruk', icon: Clock },
-                    { id: 'settings', name: 'Ayarlar', icon: Settings }
-                  ].map((tab) => {
-                    const Icon = tab.icon
-                    return (
-                      <button
-                        key={tab.id}
-                        onClick={() => setEmailTab(tab.id)}
-                        className={`py-4 px-1 border-b-2 font-medium text-sm flex items-center space-x-2 ${
-                          emailTab === tab.id
-                            ? 'border-blue-500 text-blue-600'
-                            : 'border-transparent text-gray-500 hover:text-gray-700'
-                        }`}
-                      >
-                        <Icon className="h-4 w-4" />
-                        <span>{tab.name}</span>
-                      </button>
-                    )
-                  })}
-                </nav>
-              </div>
+          {/* Tab Navigation */}
+          <div className="mb-6">
+            <nav className="flex space-x-8">
+              {[
+                { id: 'dashboard', name: 'Dashboard', icon: BarChart3 },
+                { id: 'send', name: 'Email Gönder', icon: Send },
+                { id: 'templates', name: 'Template\'ler', icon: FileText },
+                { id: 'logs', name: 'Loglar', icon: FileText },
+                { id: 'queue', name: 'Kuyruk', icon: Clock },
+                { id: 'settings', name: 'Ayarlar', icon: Settings }
+              ].map((tab) => {
+                const Icon = tab.icon
+                return (
+                  <button
+                    key={tab.id}
+                    onClick={() => setEmailTab(tab.id)}
+                    className={`py-4 px-1 border-b-2 font-medium text-sm flex items-center space-x-2 ${
+                      emailTab === tab.id
+                        ? 'border-blue-500 text-blue-600'
+                        : 'border-transparent text-gray-500 hover:text-gray-700'
+                    }`}
+                  >
+                    <Icon className="h-3 w-3" />
+                    <span>{tab.name}</span>
+                  </button>
+                )
+              })}
+            </nav>
+          </div>
 
-              {/* Tab Content */}
-              <div className="space-y-6">
-                {/* Dashboard Tab */}
-                {emailTab === 'dashboard' && (
-                  <div className="space-y-6">
-                    {/* Stats Cards */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                      <div className="bg-blue-50 rounded-lg p-6">
-                        <div className="flex items-center">
-                          <div className="p-2 bg-blue-100 rounded-lg">
-                            <Send className="h-6 w-6 text-blue-600" />
-                          </div>
-                          <div className="ml-4">
-                            <p className="text-sm font-medium text-blue-600">Toplam Gönderilen</p>
-                            <p className="text-2xl font-bold text-blue-900">{emailStats.totalSent}</p>
-                          </div>
-                        </div>
+          {/* Tab Content */}
+          <div className="admin-space-y-3">
+            {/* Dashboard Tab */}
+            {emailTab === 'dashboard' && (
+              <div className="admin-space-y-3">
+                {/* Stats Cards */}
+                <div className="admin-grid-4">
+                  <div className="admin-card-small">
+                    <div className="flex items-center space-x-1">
+                      <div className="p-2 bg-blue-100 rounded-lg">
+                        <Send className="h-3 w-3 text-blue-600" />
                       </div>
-
-                      <div className="bg-green-50 rounded-lg p-6">
-                        <div className="flex items-center">
-                          <div className="p-2 bg-green-100 rounded-lg">
-                            <CheckCircle className="h-6 w-6 text-green-600" />
-                          </div>
-                          <div className="ml-4">
-                            <p className="text-sm font-medium text-green-600">Açılma Oranı</p>
-                            <p className="text-2xl font-bold text-green-900">%{emailStats.openRate}</p>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="bg-purple-50 rounded-lg p-6">
-                        <div className="flex items-center">
-                          <div className="p-2 bg-purple-100 rounded-lg">
-                            <BarChart3 className="h-6 w-6 text-purple-600" />
-                          </div>
-                          <div className="ml-4">
-                            <p className="text-sm font-medium text-purple-600">Tıklama Oranı</p>
-                            <p className="text-2xl font-bold text-purple-900">%{emailStats.clickRate}</p>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="bg-red-50 rounded-lg p-6">
-                        <div className="flex items-center">
-                          <div className="p-2 bg-red-100 rounded-lg">
-                            <AlertCircle className="h-6 w-6 text-red-600" />
-                          </div>
-                          <div className="ml-4">
-                            <p className="text-sm font-medium text-red-600">Bounce Oranı</p>
-                            <p className="text-2xl font-bold text-red-900">%{emailStats.bounceRate}</p>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Recent Activity */}
-                    <div className="bg-white border border-gray-200 rounded-lg">
-                      <div className="p-6 border-b border-gray-200">
-                        <h3 className="text-lg font-semibold text-gray-900">Son Aktiviteler</h3>
-                      </div>
-                      <div className="p-6">
-                        <div className="space-y-4">
-                          <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-                            <div className="flex items-center">
-                              <div className="p-2 bg-blue-100 rounded-lg">
-                                <Send className="h-4 w-4 text-blue-600" />
-                              </div>
-                              <div className="ml-3">
-                                <p className="text-sm font-medium text-gray-900">Hoş geldiniz emaili gönderildi</p>
-                                <p className="text-xs text-gray-500">2 saat önce</p>
-                              </div>
-                            </div>
-                            <span className="text-xs text-green-600 bg-green-100 px-2 py-1 rounded">Başarılı</span>
-                          </div>
-                          <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-                            <div className="flex items-center">
-                              <div className="p-2 bg-yellow-100 rounded-lg">
-                                <Clock className="h-4 w-4 text-yellow-600" />
-                              </div>
-                              <div className="ml-3">
-                                <p className="text-sm font-medium text-gray-900">Rezervasyon onayı kuyruğa eklendi</p>
-                                <p className="text-xs text-gray-500">5 saat önce</p>
-                              </div>
-                            </div>
-                            <span className="text-xs text-yellow-600 bg-yellow-100 px-2 py-1 rounded">Bekliyor</span>
-                          </div>
-                        </div>
+                      <div>
+                        <p className="admin-text-xs">Toplam Gönderilen</p>
+                        <p className="admin-text-sm">{emailStats.totalSent}</p>
                       </div>
                     </div>
                   </div>
-                )}
 
-                {/* Send Email Tab */}
-                {emailTab === 'send' && (
-                  <div className="space-y-6">
-                    <div className="bg-white border border-gray-200 rounded-lg p-6">
-                      <h3 className="text-lg font-semibold text-gray-900 mb-4">Email Gönder</h3>
-                      
-                      {/* Email Türü Seçimi */}
-                      <div className="mb-6">
-                        <label className="block text-sm font-medium text-gray-700 mb-3">Gönderim Türü</label>
-                        <div className="flex space-x-4">
-                          <label className="flex items-center">
-                            <input
-                              type="radio"
-                              name="emailType"
-                              value="single"
-                              checked={emailType === 'single'}
-                              onChange={(e) => setEmailType(e.target.value as 'single' | 'bulk')}
-                              className="mr-2"
-                            />
-                            <span className="text-sm text-gray-700">Tekli Gönderim</span>
-                          </label>
-                          <label className="flex items-center">
-                            <input
-                              type="radio"
-                              name="emailType"
-                              value="bulk"
-                              checked={emailType === 'bulk'}
-                              onChange={(e) => setEmailType(e.target.value as 'single' | 'bulk')}
-                              className="mr-2"
-                            />
-                            <span className="text-sm text-gray-700">Toplu Gönderim</span>
-                          </label>
+                  <div className="admin-card-small">
+                    <div className="flex items-center space-x-1">
+                      <div className="p-2 bg-green-100 rounded-lg">
+                        <CheckCircle className="h-3 w-3 text-green-600" />
+                      </div>
+                      <div>
+                        <p className="admin-text-xs">Açılma Oranı</p>
+                        <p className="admin-text-sm">%{emailStats.openRate}</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="admin-card-small">
+                    <div className="flex items-center space-x-1">
+                      <div className="p-2 bg-purple-100 rounded-lg">
+                        <BarChart3 className="h-3 w-3 text-purple-600" />
+                      </div>
+                      <div>
+                        <p className="admin-text-xs">Tıklama Oranı</p>
+                        <p className="admin-text-sm">%{emailStats.clickRate}</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="admin-card-small">
+                    <div className="flex items-center space-x-1">
+                      <div className="p-2 bg-red-100 rounded-lg">
+                        <AlertCircle className="h-3 w-3 text-red-600" />
+                      </div>
+                      <div>
+                        <p className="admin-text-xs">Bounce Oranı</p>
+                        <p className="admin-text-sm">%{emailStats.bounceRate}</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Recent Activity */}
+                <div className="admin-card">
+                  <div className="admin-card-header">
+                    <h3 className="admin-card-title">Son Aktiviteler</h3>
+                  </div>
+                  <div className="admin-space-y-2">
+                    <div className="flex items-center justify-between p-2 bg-gray-50 rounded">
+                      <div className="flex items-center space-x-1">
+                        <div className="p-1 bg-blue-100 rounded">
+                          <Send className="h-3 w-3 text-blue-600" />
+                        </div>
+                        <div>
+                          <p className="admin-text-xs">Hoş geldiniz emaili gönderildi</p>
+                          <p className="admin-text-xs">2 saat önce</p>
                         </div>
                       </div>
-
-                      <form onSubmit={(e) => {
-                        e.preventDefault()
-                        const formData = new FormData(e.target as HTMLFormElement)
-                        const data = Object.fromEntries(formData.entries())
-                        
-                        if (emailType === 'bulk') {
-                          data.recipientType = 'bulk'
-                          data.recipientEmails = JSON.stringify(selectedUsers)
-                        } else {
-                          data.recipientType = 'single'
-                        }
-                        
-                        handleSendEmail(data)
-                      }}>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                          {emailType === 'single' ? (
-                            <div>
-                              <label className="block text-sm font-medium text-gray-700 mb-2">
-                                Alıcı Email
-                              </label>
-                              <input
-                                type="email"
-                                name="to"
-                                required
-                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                placeholder="ornek@email.com"
-                              />
-                            </div>
-                          ) : (
-                            <div>
-                              <label className="block text-sm font-medium text-gray-700 mb-2">
-                                Seçili Kullanıcılar ({selectedUsers.length})
-                              </label>
-                              <div className="max-h-40 overflow-y-auto border border-gray-300 rounded-md p-2">
-                                {usersLoading ? (
-                                  <div className="text-center py-4">
-                                    <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600 mx-auto"></div>
-                                    <p className="text-sm text-gray-500 mt-2">Kullanıcılar yükleniyor...</p>
-                                  </div>
-                                ) : (
-                                  <div className="space-y-2">
-                                    <div className="flex items-center">
-                                      <input
-                                        type="checkbox"
-                                        checked={selectedUsers.length === users.length}
-                                        onChange={(e) => {
-                                          if (e.target.checked) {
-                                            setSelectedUsers(users.map(u => u.email))
-                                          } else {
-                                            setSelectedUsers([])
-                                          }
-                                        }}
-                                        className="mr-2"
-                                      />
-                                      <span className="text-sm font-medium text-gray-700">Tümünü Seç</span>
-                                    </div>
-                                    {users.map((user) => (
-                                      <div key={user.id} className="flex items-center">
-                                        <input
-                                          type="checkbox"
-                                          checked={selectedUsers.includes(user.email)}
-                                          onChange={(e) => {
-                                            if (e.target.checked) {
-                                              setSelectedUsers([...selectedUsers, user.email])
-                                            } else {
-                                              setSelectedUsers(selectedUsers.filter(email => email !== user.email))
-                                            }
-                                          }}
-                                          className="mr-2"
-                                        />
-                                        <span className="text-sm text-gray-700">{user.name} ({user.email})</span>
-                                      </div>
-                                    ))}
-                                  </div>
-                                )}
-                              </div>
-                            </div>
-                          )}
-                          <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
-                              Konu
-                            </label>
-                            <input
-                              type="text"
-                              name="subject"
-                              required
-                              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                              placeholder="Email konusu"
-                            />
-                          </div>
+                      <span className="admin-badge admin-badge-success">Başarılı</span>
+                    </div>
+                    <div className="flex items-center justify-between p-2 bg-gray-50 rounded">
+                      <div className="flex items-center space-x-1">
+                        <div className="p-1 bg-yellow-100 rounded">
+                          <Clock className="h-3 w-3 text-yellow-600" />
                         </div>
-                        <div className="mt-6">
-                          <label className="block text-sm font-medium text-gray-700 mb-2">
-                            İçerik
+                        <div>
+                          <p className="admin-text-xs">Rezervasyon onayı kuyruğa eklendi</p>
+                          <p className="admin-text-xs">5 saat önce</p>
+                        </div>
+                      </div>
+                      <span className="admin-badge admin-badge-warning">Bekliyor</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Send Email Tab */}
+            {emailTab === 'send' && (
+              <div className="admin-space-y-3">
+                <div className="admin-card">
+                  <div className="admin-card-header">
+                    <h3 className="admin-card-title">Email Gönder</h3>
+                  </div>
+                  
+                  {/* Email Türü Seçimi */}
+                  <div className="mb-4">
+                    <label className="admin-form-label">Gönderim Türü</label>
+                    <div className="flex space-x-4">
+                      <label className="flex items-center">
+                        <input
+                          type="radio"
+                          name="emailType"
+                          value="single"
+                          checked={emailType === 'single'}
+                          onChange={(e) => setEmailType(e.target.value as 'single' | 'bulk')}
+                          className="mr-2"
+                        />
+                        <span className="admin-text-xs">Tekli Gönderim</span>
+                      </label>
+                      <label className="flex items-center">
+                        <input
+                          type="radio"
+                          name="emailType"
+                          value="bulk"
+                          checked={emailType === 'bulk'}
+                          onChange={(e) => setEmailType(e.target.value as 'single' | 'bulk')}
+                          className="mr-2"
+                        />
+                        <span className="admin-text-xs">Toplu Gönderim</span>
+                      </label>
+                    </div>
+                  </div>
+
+                  <form onSubmit={(e) => {
+                    e.preventDefault()
+                    const formData = new FormData(e.target as HTMLFormElement)
+                    const data = Object.fromEntries(formData.entries())
+                    
+                    if (emailType === 'bulk') {
+                      data.recipientType = 'bulk'
+                      data.recipientEmails = JSON.stringify(selectedUsers)
+                    } else {
+                      data.recipientType = 'single'
+                    }
+                    
+                    handleSendEmail(data)
+                  }}>
+                    <div className="admin-grid-2">
+                      {emailType === 'single' ? (
+                        <div>
+                          <label className="admin-form-label">
+                            Alıcı Email
                           </label>
-                          <textarea
-                            name="content"
-                            rows={10}
+                          <input
+                            type="email"
+                            name="to"
                             required
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            placeholder="Email içeriği..."
+                            className="admin-form-input"
+                            placeholder="ornek@email.com"
                           />
                         </div>
-                        {sendSuccess && (
-                          <div className="mt-4 p-4 bg-green-100 border border-green-400 text-green-700 rounded">
-                            {sendSuccess}
-                          </div>
-                        )}
-                        {sendError && (
-                          <div className="mt-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
-                            {sendError}
-                          </div>
-                        )}
-                        <div className="mt-6 flex justify-end">
-                          <button
-                            type="submit"
-                            disabled={sendingEmail || (emailType === 'bulk' && selectedUsers.length === 0)}
-                            className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50"
-                          >
-                            {sendingEmail ? 'Gönderiliyor...' : 
-                             emailType === 'bulk' ? `Toplu Gönder (${selectedUsers.length} kişi)` : 'Gönder'}
-                          </button>
-                        </div>
-                      </form>
-                    </div>
-                  </div>
-                )}
-
-                {/* Templates Tab */}
-                {emailTab === 'templates' && (
-                  <div className="space-y-6">
-                    <div className="flex justify-between items-center">
-                      <h3 className="text-lg font-semibold text-gray-900">Email Template'leri</h3>
-                      <button
-                        onClick={() => setShowTemplateModal(true)}
-                        className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-                      >
-                        Yeni Template
-                      </button>
-                    </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                      {templates.map((template) => (
-                        <div key={template.id} className="bg-white border border-gray-200 rounded-lg p-6">
-                          <div className="flex items-center justify-between mb-4">
-                            <div className="flex items-center">
-                              {getTemplateIcon(template.type)}
-                              <h4 className="ml-2 text-sm font-medium text-gray-900">{template.name}</h4>
-                            </div>
-                            <span className={`text-xs px-2 py-1 rounded ${getStatusColor(template.status)}`}>
-                              {template.status}
-                            </span>
-                          </div>
-                          <p className="text-sm text-gray-600 mb-4">{template.subject}</p>
-                          <div className="flex space-x-2">
-                            <button
-                              onClick={() => handleUseTemplate(template)}
-                              className="flex-1 px-3 py-2 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700"
-                            >
-                              Kullan
-                            </button>
-                            <button
-                              onClick={() => handleEditTemplate(template)}
-                              className="flex-1 px-3 py-2 bg-gray-600 text-white text-sm rounded-md hover:bg-gray-700"
-                            >
-                              Düzenle
-                            </button>
+                      ) : (
+                        <div>
+                          <label className="admin-form-label">
+                            Seçili Kullanıcılar ({selectedUsers.length})
+                          </label>
+                          <div className="max-h-40 overflow-y-auto border border-gray-300 rounded-md p-2">
+                            {usersLoading ? (
+                              <div className="text-center py-4">
+                                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600 mx-auto"></div>
+                                <p className="admin-text-xs mt-2">Kullanıcılar yükleniyor...</p>
+                              </div>
+                            ) : (
+                              <div className="admin-space-y-2">
+                                <div className="flex items-center">
+                                  <input
+                                    type="checkbox"
+                                    checked={selectedUsers.length === users.length}
+                                    onChange={(e) => {
+                                      if (e.target.checked) {
+                                        setSelectedUsers(users.map(u => u.email))
+                                      } else {
+                                        setSelectedUsers([])
+                                      }
+                                    }}
+                                    className="mr-2"
+                                  />
+                                  <span className="admin-text-xs">Tümünü Seç</span>
+                                </div>
+                                {users.map((user) => (
+                                  <div key={user.id} className="flex items-center">
+                                    <input
+                                      type="checkbox"
+                                      checked={selectedUsers.includes(user.email)}
+                                      onChange={(e) => {
+                                        if (e.target.checked) {
+                                          setSelectedUsers([...selectedUsers, user.email])
+                                        } else {
+                                          setSelectedUsers(selectedUsers.filter(email => email !== user.email))
+                                        }
+                                      }}
+                                      className="mr-2"
+                                    />
+                                    <span className="admin-text-xs">{user.name} ({user.email})</span>
+                                  </div>
+                                ))}
+                              </div>
+                            )}
                           </div>
                         </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {/* Logs Tab */}
-                {emailTab === 'logs' && (
-                  <div className="space-y-6">
-                    <div className="flex justify-between items-center">
-                      <h3 className="text-lg font-semibold text-gray-900">Email Logları</h3>
-                      <div className="flex space-x-3">
-                        <button
-                          onClick={() => {
-                            setLogsLoading(true)
-                            fetch('/api/email/logs')
-                              .then(res => res.json())
-                              .then(data => {
-                                if (data.success) {
-                                  setEmailLogs(data.data.logs)
-                                }
-                                setLogsLoading(false)
-                              })
-                              .catch(() => setLogsLoading(false))
-                          }}
-                          className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-                        >
-                          Yenile
-                        </button>
-                        <button
-                          onClick={() => {
-                            if (confirm('90 günden eski email logları silinecek. Emin misiniz?')) {
-                              setLogsLoading(true)
-                              fetch('/api/system/cleanup-logs', { method: 'POST' })
-                                .then(res => res.json())
-                                .then(data => {
-                                  if (data.success) {
-                                    alert(data.message)
-                                    // Logları yenile
-                                    return fetch('/api/email/logs')
-                                  }
-                                  throw new Error(data.error)
-                                })
-                                .then(res => res.json())
-                                .then(data => {
-                                  if (data.success) {
-                                    setEmailLogs(data.data.logs)
-                                  }
-                                  setLogsLoading(false)
-                                })
-                                .catch(error => {
-                                  alert('Temizleme hatası: ' + error.message)
-                                  setLogsLoading(false)
-                                })
-                            }
-                          }}
-                          className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
-                        >
-                          Eski Logları Temizle
-                        </button>
+                      )}
+                      <div>
+                        <label className="admin-form-label">
+                          Konu
+                        </label>
+                        <input
+                          type="text"
+                          name="subject"
+                          required
+                          className="admin-form-input"
+                          placeholder="Email konusu"
+                        />
                       </div>
                     </div>
-                    
-                    {logsLoading ? (
-                      <div className="flex justify-center py-8">
-                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-                      </div>
-                    ) : (
-                      <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
-                        <div className="overflow-x-auto">
-                          <table className="min-w-full divide-y divide-gray-200">
-                            <thead className="bg-gray-50">
-                              <tr>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Alıcı</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Konu</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Durum</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Gönderim</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Açılma</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tıklama</th>
-                              </tr>
-                            </thead>
-                            <tbody className="bg-white divide-y divide-gray-200">
-                              {emailLogs.map((log) => (
-                                <tr key={log.id}>
-                                  <td className="px-6 py-4 whitespace-nowrap">
-                                    <div>
-                                      <div className="text-sm font-medium text-gray-900">{log.recipientName}</div>
-                                      <div className="text-sm text-gray-500">{log.recipientEmail}</div>
-                                    </div>
-                                  </td>
-                                  <td className="px-6 py-4">
-                                    <div className="text-sm text-gray-900">{log.subject}</div>
-                                  </td>
-                                  <td className="px-6 py-4 whitespace-nowrap">
-                                    <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                                      log.status === 'sent' ? 'bg-green-100 text-green-800' :
-                                      log.status === 'delivered' ? 'bg-blue-100 text-blue-800' :
-                                      log.status === 'bounced' ? 'bg-red-100 text-red-800' :
-                                      'bg-yellow-100 text-yellow-800'
-                                    }`}>
-                                      {log.status}
-                                    </span>
-                                  </td>
-                                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                    {new Date(log.sentAt).toLocaleString('tr-TR')}
-                                  </td>
-                                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                    {log.openedAt ? new Date(log.openedAt).toLocaleString('tr-TR') : '-'}
-                                  </td>
-                                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                    {log.clickedAt ? new Date(log.clickedAt).toLocaleString('tr-TR') : '-'}
-                                  </td>
-                                </tr>
-                              ))}
-                            </tbody>
-                          </table>
-                        </div>
+                    <div className="mt-4">
+                      <label className="admin-form-label">
+                        İçerik
+                      </label>
+                      <textarea
+                        name="content"
+                        rows={10}
+                        required
+                        className="admin-form-input"
+                        placeholder="Email içeriği..."
+                      />
+                    </div>
+                    {sendSuccess && (
+                      <div className="mt-4 p-3 bg-green-100 border border-green-400 text-green-700 rounded">
+                        {sendSuccess}
                       </div>
                     )}
-                  </div>
-                )}
-
-                {/* Queue Tab */}
-                {emailTab === 'queue' && (
-                  <div className="space-y-6">
-                    <div className="flex justify-between items-center">
-                      <h3 className="text-lg font-semibold text-gray-900">Email Kuyruğu</h3>
+                    {sendError && (
+                      <div className="mt-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
+                        {sendError}
+                      </div>
+                    )}
+                    <div className="mt-4 flex justify-end">
                       <button
-                        onClick={() => {
-                          setQueueLoading(true)
-                          fetch('/api/email/queue')
+                        type="submit"
+                        disabled={sendingEmail || (emailType === 'bulk' && selectedUsers.length === 0)}
+                        className="admin-btn admin-btn-primary"
+                      >
+                        {sendingEmail ? 'Gönderiliyor...' : 
+                         emailType === 'bulk' ? `Toplu Gönder (${selectedUsers.length} kişi)` : 'Gönder'}
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            )}
+
+            {/* Templates Tab */}
+            {emailTab === 'templates' && (
+              <div className="admin-space-y-3">
+                <div className="flex justify-between items-center">
+                  <h3 className="admin-card-title">Email Template'leri</h3>
+                  <button
+                    onClick={() => setShowTemplateModal(true)}
+                    className="admin-btn admin-btn-primary"
+                  >
+                    Yeni Template
+                  </button>
+                </div>
+                <div className="admin-grid-3">
+                  {templates.map((template) => (
+                    <div key={template.id} className="admin-card-small">
+                      <div className="admin-card-header">
+                        <div className="flex items-center space-x-1">
+                          {getTemplateIcon(template.type)}
+                          <h4 className="admin-text-xs">{template.name}</h4>
+                        </div>
+                        <span className={`admin-text-xs px-2 py-1 rounded ${getStatusColor(template.status)}`}>
+                          {template.status}
+                        </span>
+                      </div>
+                      <p className="admin-text-xs mb-3">{template.subject}</p>
+                      <div className="flex space-x-2">
+                        <button
+                          onClick={() => handleUseTemplate(template)}
+                          className="flex-1 admin-btn admin-btn-primary"
+                        >
+                          Kullan
+                        </button>
+                        <button
+                          onClick={() => handleEditTemplate(template)}
+                          className="flex-1 admin-btn admin-btn-secondary"
+                        >
+                          Düzenle
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Logs Tab */}
+            {emailTab === 'logs' && (
+              <div className="admin-space-y-3">
+                <div className="flex justify-between items-center">
+                  <h3 className="admin-card-title">Email Logları</h3>
+                  <div className="flex space-x-2">
+                    <button
+                      onClick={() => {
+                        setLogsLoading(true)
+                        fetch('/api/email/logs')
+                          .then(res => res.json())
+                          .then(data => {
+                            if (data.success) {
+                              setEmailLogs(data.data.logs)
+                            }
+                            setLogsLoading(false)
+                          })
+                          .catch(() => setLogsLoading(false))
+                      }}
+                      className="admin-btn admin-btn-primary"
+                    >
+                      Yenile
+                    </button>
+                    <button
+                      onClick={() => {
+                        if (confirm('90 günden eski email logları silinecek. Emin misiniz?')) {
+                          setLogsLoading(true)
+                          fetch('/api/system/cleanup-logs', { method: 'POST' })
                             .then(res => res.json())
                             .then(data => {
                               if (data.success) {
-                                setEmailQueue(data.data.queue)
+                                alert(data.message)
+                                // Logları yenile
+                                return fetch('/api/email/logs')
                               }
-                              setQueueLoading(false)
+                              throw new Error(data.error)
                             })
-                            .catch(() => setQueueLoading(false))
-                        }}
-                        className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-                      >
-                        Yenile
-                      </button>
-                    </div>
-                    
-                    {queueLoading ? (
-                      <div className="flex justify-center py-8">
-                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-                      </div>
-                    ) : (
-                      <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
-                        <div className="overflow-x-auto">
-                          <table className="min-w-full divide-y divide-gray-200">
-                            <thead className="bg-gray-50">
-                              <tr>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Alıcı</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Konu</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Öncelik</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Durum</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Zamanlama</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">İşlemler</th>
-                              </tr>
-                            </thead>
-                            <tbody className="bg-white divide-y divide-gray-200">
-                              {emailQueue.map((item) => (
-                                <tr key={item.id}>
-                                  <td className="px-6 py-4 whitespace-nowrap">
-                                    <div>
-                                      <div className="text-sm font-medium text-gray-900">{item.recipientName}</div>
-                                      <div className="text-sm text-gray-500">{item.recipientEmail}</div>
-                                    </div>
-                                  </td>
-                                  <td className="px-6 py-4">
-                                    <div className="text-sm text-gray-900">{item.subject}</div>
-                                  </td>
-                                  <td className="px-6 py-4 whitespace-nowrap">
-                                    <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                                      item.priority === 'high' ? 'bg-red-100 text-red-800' :
-                                      item.priority === 'normal' ? 'bg-blue-100 text-blue-800' :
-                                      'bg-gray-100 text-gray-800'
-                                    }`}>
-                                      {item.priority}
-                                    </span>
-                                  </td>
-                                  <td className="px-6 py-4 whitespace-nowrap">
-                                    <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                                      item.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                                      item.status === 'processing' ? 'bg-blue-100 text-blue-800' :
-                                      item.status === 'failed' ? 'bg-red-100 text-red-800' :
-                                      'bg-green-100 text-green-800'
-                                    }`}>
-                                      {item.status}
-                                    </span>
-                                  </td>
-                                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                    {new Date(item.scheduledAt).toLocaleString('tr-TR')}
-                                  </td>
-                                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                    <div className="flex space-x-2">
-                                      {item.status === 'failed' && (
-                                        <button className="text-blue-600 hover:text-blue-900">Tekrar Dene</button>
-                                      )}
-                                      <button className="text-red-600 hover:text-red-900">İptal</button>
-                                    </div>
-                                  </td>
-                                </tr>
-                              ))}
-                            </tbody>
-                          </table>
-                        </div>
-                      </div>
-                    )}
+                            .then(res => res.json())
+                            .then(data => {
+                              if (data.success) {
+                                setEmailLogs(data.data.logs)
+                              }
+                              setLogsLoading(false)
+                            })
+                            .catch(error => {
+                              alert('Temizleme hatası: ' + error.message)
+                              setLogsLoading(false)
+                            })
+                        }
+                      }}
+                      className="admin-btn admin-btn-secondary"
+                    >
+                      Eski Logları Temizle
+                    </button>
                   </div>
-                )}
-
-                {/* Settings Tab */}
-                {emailTab === 'settings' && (
-                  <div className="space-y-6">
-                    <div className="bg-white border border-gray-200 rounded-lg p-6">
-                      <h3 className="text-lg font-semibold text-gray-900 mb-4">SMTP Ayarları</h3>
-                      <form onSubmit={(e) => {
-                        e.preventDefault()
-                        handleSaveSettings()
-                      }}>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                          <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
-                              SMTP Host
-                            </label>
-                            <input
-                              type="text"
-                              value={settingsForm.smtpHost}
-                              onChange={(e) => setSettingsForm({...settingsForm, smtpHost: e.target.value})}
-                              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                              placeholder="smtp.gmail.com"
-                            />
-                          </div>
-                          <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
-                              SMTP Port
-                            </label>
-                            <input
-                              type="number"
-                              value={settingsForm.smtpPort}
-                              onChange={(e) => setSettingsForm({...settingsForm, smtpPort: e.target.value})}
-                              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                              placeholder="587"
-                            />
-                          </div>
-                          <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
-                              SMTP Kullanıcı
-                            </label>
-                            <input
-                              type="text"
-                              value={settingsForm.smtpUser}
-                              onChange={(e) => setSettingsForm({...settingsForm, smtpUser: e.target.value})}
-                              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                              placeholder="kullanici@email.com"
-                            />
-                          </div>
-                          <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
-                              SMTP Şifre
-                            </label>
-                            <input
-                              type="password"
-                              value={settingsForm.smtpPassword}
-                              onChange={(e) => setSettingsForm({...settingsForm, smtpPassword: e.target.value})}
-                              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                              placeholder="••••••••"
-                            />
-                          </div>
-                          <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
-                              Gönderen Email
-                            </label>
-                            <input
-                              type="email"
-                              value={settingsForm.fromEmail}
-                              onChange={(e) => setSettingsForm({...settingsForm, fromEmail: e.target.value})}
-                              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                              placeholder="noreply@gurbet.biz"
-                            />
-                          </div>
-                          <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
-                              Gönderen Adı
-                            </label>
-                            <input
-                              type="text"
-                              value={settingsForm.fromName}
-                              onChange={(e) => setSettingsForm({...settingsForm, fromName: e.target.value})}
-                              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                              placeholder="Gurbet.biz"
-                            />
-                          </div>
-                        </div>
-                        {settingsSuccess && (
-                          <div className="mt-4 p-4 bg-green-100 border border-green-400 text-green-700 rounded">
-                            {settingsSuccess}
-                          </div>
-                        )}
-                        {settingsError && (
-                          <div className="mt-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
-                            {settingsError}
-                          </div>
-                        )}
-                        <div className="mt-6 flex justify-end">
-                          <button
-                            type="submit"
-                            disabled={savingSettings}
-                            className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50"
-                          >
-                            {savingSettings ? 'Kaydediliyor...' : 'Kaydet'}
-                          </button>
-                        </div>
-                      </form>
+                </div>
+                
+                {logsLoading ? (
+                  <div className="flex justify-center py-8">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                  </div>
+                ) : (
+                  <div className="admin-card">
+                    <div className="overflow-x-auto">
+                      <table className="admin-table">
+                        <thead>
+                          <tr>
+                            <th className="admin-text-xs">Alıcı</th>
+                            <th className="admin-text-xs">Konu</th>
+                            <th className="admin-text-xs">Durum</th>
+                            <th className="admin-text-xs">Gönderim</th>
+                            <th className="admin-text-xs">Açılma</th>
+                            <th className="admin-text-xs">Tıklama</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {emailLogs.map((log) => (
+                            <tr key={log.id}>
+                              <td>
+                                <div>
+                                  <div className="admin-text-xs">{log.recipientName}</div>
+                                  <div className="admin-text-xs">{log.recipientEmail}</div>
+                                </div>
+                              </td>
+                              <td>
+                                <div className="admin-text-xs">{log.subject}</div>
+                              </td>
+                              <td>
+                                <span className={`admin-badge ${
+                                  log.status === 'sent' ? 'admin-badge-success' :
+                                  log.status === 'delivered' ? 'admin-badge-success' :
+                                  log.status === 'bounced' ? 'admin-badge-error' :
+                                  'admin-badge-warning'
+                                }`}>
+                                  {log.status}
+                                </span>
+                              </td>
+                              <td className="admin-text-xs">
+                                {new Date(log.sentAt).toLocaleString('tr-TR')}
+                              </td>
+                              <td className="admin-text-xs">
+                                {log.openedAt ? new Date(log.openedAt).toLocaleString('tr-TR') : '-'}
+                              </td>
+                              <td className="admin-text-xs">
+                                {log.clickedAt ? new Date(log.clickedAt).toLocaleString('tr-TR') : '-'}
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
                     </div>
                   </div>
                 )}
               </div>
-            </div>
+            )}
+
+            {/* Queue Tab */}
+            {emailTab === 'queue' && (
+              <div className="admin-space-y-3">
+                <div className="flex justify-between items-center">
+                  <h3 className="admin-card-title">Email Kuyruğu</h3>
+                  <button
+                    onClick={() => {
+                      setQueueLoading(true)
+                      fetch('/api/email/queue')
+                        .then(res => res.json())
+                        .then(data => {
+                          if (data.success) {
+                            setEmailQueue(data.data.queue)
+                          }
+                          setQueueLoading(false)
+                        })
+                        .catch(() => setQueueLoading(false))
+                    }}
+                    className="admin-btn admin-btn-primary"
+                  >
+                    Yenile
+                  </button>
+                </div>
+                
+                {queueLoading ? (
+                  <div className="flex justify-center py-8">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                  </div>
+                ) : (
+                  <div className="admin-card">
+                    <div className="overflow-x-auto">
+                      <table className="admin-table">
+                        <thead>
+                          <tr>
+                            <th className="admin-text-xs">Alıcı</th>
+                            <th className="admin-text-xs">Konu</th>
+                            <th className="admin-text-xs">Öncelik</th>
+                            <th className="admin-text-xs">Durum</th>
+                            <th className="admin-text-xs">Zamanlama</th>
+                            <th className="admin-text-xs">İşlemler</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {emailQueue.map((item) => (
+                            <tr key={item.id}>
+                              <td>
+                                <div>
+                                  <div className="admin-text-xs">{item.recipientName}</div>
+                                  <div className="admin-text-xs">{item.recipientEmail}</div>
+                                </div>
+                              </td>
+                              <td>
+                                <div className="admin-text-xs">{item.subject}</div>
+                              </td>
+                              <td>
+                                <span className={`admin-badge ${
+                                  item.priority === 'high' ? 'admin-badge-error' :
+                                  item.priority === 'normal' ? 'admin-badge-success' :
+                                  'admin-badge-warning'
+                                }`}>
+                                  {item.priority}
+                                </span>
+                              </td>
+                              <td>
+                                <span className={`admin-badge ${
+                                  item.status === 'pending' ? 'admin-badge-warning' :
+                                  item.status === 'processing' ? 'admin-badge-success' :
+                                  item.status === 'failed' ? 'admin-badge-error' :
+                                  'admin-badge-success'
+                                }`}>
+                                  {item.status}
+                                </span>
+                              </td>
+                              <td className="admin-text-xs">
+                                {new Date(item.scheduledAt).toLocaleString('tr-TR')}
+                              </td>
+                              <td className="admin-text-xs">
+                                <div className="flex space-x-2">
+                                  {item.status === 'failed' && (
+                                    <button className="text-blue-600 hover:text-blue-900">Tekrar Dene</button>
+                                  )}
+                                  <button className="text-red-600 hover:text-red-900">İptal</button>
+                                </div>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Settings Tab */}
+            {emailTab === 'settings' && (
+              <div className="admin-space-y-3">
+                <div className="admin-card">
+                  <div className="admin-card-header">
+                    <h3 className="admin-card-title">SMTP Ayarları</h3>
+                  </div>
+                  <form onSubmit={(e) => {
+                    e.preventDefault()
+                    handleSaveSettings()
+                  }}>
+                    <div className="admin-grid-2">
+                      <div>
+                        <label className="admin-form-label">
+                          SMTP Host
+                        </label>
+                        <input
+                          type="text"
+                          value={settingsForm.smtpHost}
+                          onChange={(e) => setSettingsForm({...settingsForm, smtpHost: e.target.value})}
+                          className="admin-form-input"
+                          placeholder="smtp.gmail.com"
+                        />
+                      </div>
+                      <div>
+                        <label className="admin-form-label">
+                          SMTP Port
+                        </label>
+                        <input
+                          type="number"
+                          value={settingsForm.smtpPort}
+                          onChange={(e) => setSettingsForm({...settingsForm, smtpPort: e.target.value})}
+                          className="admin-form-input"
+                          placeholder="587"
+                        />
+                      </div>
+                      <div>
+                        <label className="admin-form-label">
+                          SMTP Kullanıcı
+                        </label>
+                        <input
+                          type="text"
+                          value={settingsForm.smtpUser}
+                          onChange={(e) => setSettingsForm({...settingsForm, smtpUser: e.target.value})}
+                          className="admin-form-input"
+                          placeholder="kullanici@email.com"
+                        />
+                      </div>
+                      <div>
+                        <label className="admin-form-label">
+                          SMTP Şifre
+                        </label>
+                        <input
+                          type="password"
+                          value={settingsForm.smtpPassword}
+                          onChange={(e) => setSettingsForm({...settingsForm, smtpPassword: e.target.value})}
+                          className="admin-form-input"
+                          placeholder="••••••••"
+                        />
+                      </div>
+                      <div>
+                        <label className="admin-form-label">
+                          Gönderen Email
+                        </label>
+                        <input
+                          type="email"
+                          value={settingsForm.fromEmail}
+                          onChange={(e) => setSettingsForm({...settingsForm, fromEmail: e.target.value})}
+                          className="admin-form-input"
+                          placeholder="noreply@gurbet.biz"
+                        />
+                      </div>
+                      <div>
+                        <label className="admin-form-label">
+                          Gönderen Adı
+                        </label>
+                        <input
+                          type="text"
+                          value={settingsForm.fromName}
+                          onChange={(e) => setSettingsForm({...settingsForm, fromName: e.target.value})}
+                          className="admin-form-input"
+                          placeholder="Gurbet.biz"
+                        />
+                      </div>
+                    </div>
+                    {settingsSuccess && (
+                      <div className="mt-4 p-3 bg-green-100 border border-green-400 text-green-700 rounded">
+                        {settingsSuccess}
+                      </div>
+                    )}
+                    {settingsError && (
+                      <div className="mt-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
+                        {settingsError}
+                      </div>
+                    )}
+                    <div className="mt-4 flex justify-end">
+                      <button
+                        type="submit"
+                        disabled={savingSettings}
+                        className="admin-btn admin-btn-primary"
+                      >
+                        {savingSettings ? 'Kaydediliyor...' : 'Kaydet'}
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
 
       {/* Template Modal */}
       {showTemplateModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 w-full max-w-2xl">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">
-              {editingTemplate ? 'Template Düzenle' : 'Yeni Template'}
-            </h3>
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Template Adı
-                </label>
-                <input
-                  type="text"
-                  value={templateForm.name}
-                  onChange={(e) => setTemplateForm({...templateForm, name: e.target.value})}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="Template adı"
-                />
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Konu
-                </label>
-                <input
-                  type="text"
-                  value={templateForm.subject}
-                  onChange={(e) => setTemplateForm({...templateForm, subject: e.target.value})}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="Email konusu"
-                />
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Template Türü
-                </label>
-                <select
-                  value={templateForm.type}
-                  onChange={(e) => setTemplateForm({...templateForm, type: e.target.value as any})}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                >
-                  <option value="welcome">Hoş Geldiniz</option>
-                  <option value="reservation">Rezervasyon</option>
-                  <option value="marketing">Pazarlama</option>
-                  <option value="system">Sistem</option>
-                </select>
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  İçerik
-                </label>
-                <textarea
-                  value={templateForm.content}
-                  onChange={(e) => setTemplateForm({...templateForm, content: e.target.value})}
-                  rows={8}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="Email içeriği..."
-                />
+        <div className="admin-modal-overlay">
+          <div className="admin-modal">
+            <div className="admin-modal-header">
+              <h3 className="admin-modal-title">
+                {editingTemplate ? 'Template Düzenle' : 'Yeni Template'}
+              </h3>
+            </div>
+            <div className="admin-modal-content">
+              <div className="admin-space-y-2">
+                <div>
+                  <label className="admin-form-label">
+                    Template Adı
+                  </label>
+                  <input
+                    type="text"
+                    value={templateForm.name}
+                    onChange={(e) => setTemplateForm({...templateForm, name: e.target.value})}
+                    className="admin-form-input"
+                    placeholder="Template adı"
+                  />
+                </div>
+                
+                <div>
+                  <label className="admin-form-label">
+                    Konu
+                  </label>
+                  <input
+                    type="text"
+                    value={templateForm.subject}
+                    onChange={(e) => setTemplateForm({...templateForm, subject: e.target.value})}
+                    className="admin-form-input"
+                    placeholder="Email konusu"
+                  />
+                </div>
+                
+                <div>
+                  <label className="admin-form-label">
+                    Template Türü
+                  </label>
+                  <select
+                    value={templateForm.type}
+                    onChange={(e) => setTemplateForm({...templateForm, type: e.target.value as any})}
+                    className="admin-form-select"
+                  >
+                    <option value="welcome">Hoş Geldiniz</option>
+                    <option value="reservation">Rezervasyon</option>
+                    <option value="marketing">Pazarlama</option>
+                    <option value="system">Sistem</option>
+                  </select>
+                </div>
+                
+                <div>
+                  <label className="admin-form-label">
+                    İçerik
+                  </label>
+                  <textarea
+                    value={templateForm.content}
+                    onChange={(e) => setTemplateForm({...templateForm, content: e.target.value})}
+                    rows={8}
+                    className="admin-form-input"
+                    placeholder="Email içeriği..."
+                  />
+                </div>
               </div>
             </div>
             
-            <div className="mt-6 flex justify-end space-x-3">
+            <div className="admin-modal-footer">
               <button
                 onClick={() => {
                   setShowTemplateModal(false)
                   setEditingTemplate(null)
                   setTemplateForm({ name: '', subject: '', content: '', type: 'welcome' })
                 }}
-                className="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400"
+                className="admin-btn admin-btn-secondary"
               >
                 İptal
               </button>
               <button
                 onClick={handleCreateTemplate}
-                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                className="admin-btn admin-btn-primary"
               >
                 {editingTemplate ? 'Güncelle' : 'Oluştur'}
               </button>

@@ -24,9 +24,15 @@ export default function TestPage() {
   }
 
   return (
-    <div>
-      <h1>Test Page</h1>
-      <pre>{JSON.stringify(data, null, 2)}</pre>
+    <div className="admin-page-container">
+      <div className="admin-main-content">
+        <div className="admin-content-wrapper">
+          <div className="admin-card">
+            <h1 className="admin-card-title">Test Page</h1>
+            <pre className="admin-text-xs">{JSON.stringify(data, null, 2)}</pre>
+          </div>
+        </div>
+      </div>
     </div>
   )
 }

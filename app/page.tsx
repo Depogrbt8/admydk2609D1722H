@@ -22,15 +22,15 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen bg-white flex items-center justify-center">
-      <div className="max-w-md w-full space-y-8 p-8">
+      <div className="max-w-md w-full admin-space-y-3 p-3">
         {/* Logo */}
         <div className="text-center">
-          <h2 className="text-3xl font-bold text-gray-900 mb-2">Grbt8 AP</h2>
+          <h2 className="admin-text-lg mb-2">Grbt8 AP</h2>
         </div>
 
         {/* Giriş Formu */}
-        <form className="mt-8 space-y-6" onSubmit={handleLogin}>
-          <div className="space-y-4">
+        <form className="mt-3 admin-space-y-3" onSubmit={handleLogin}>
+          <div className="admin-space-y-2">
             {/* Kullanıcı Adı */}
             <div>
               <label htmlFor="username" className="sr-only">

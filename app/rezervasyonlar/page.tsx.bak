@@ -525,46 +525,49 @@ export default function RezervasyonlarPage() {
   }
 
   return (
-    <div className="admin-page-container">
+    <div className="flex h-screen bg-white w-full">
       <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
-      <div className="admin-main-content">
+      <div className="flex-1 p-4 w-full overflow-y-auto scroll-smooth">
         <Header />
-        <div className="admin-content-wrapper">
-          {/* Filtreler */}
-          <ReservationFilters
-            activeFilter={activeFilter}
-            onFilterChange={setActiveFilter}
-            searchTerm={searchTerm}
-            onSearchChange={setSearchTerm}
-          />
+        <div className="max-w-7xl mx-auto space-y-3">
 
-          {/* Rezervasyon Listesi */}
-          <div className="mt-3">
-            <ReservationList
-              reservations={filteredReservations}
-              onStatusChange={handleStatusChange}
-              onViewDetails={handleViewDetails}
-            />
-          </div>
 
-          {/* Boş Durum */}
-          {filteredReservations.length === 0 && (
-            <div className="text-center py-12">
-              <div className="text-gray-400 mb-4">
-                <svg className="mx-auto h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                </svg>
-              </div>
-              <h3 className="admin-text-sm mb-2">Rezervasyon Bulunamadı</h3>
-              <p className="admin-text-xs">
-                {searchTerm || activeFilter !== 'all' 
-                  ? 'Arama kriterlerinize uygun rezervasyon bulunamadı.'
-                  : 'Henüz rezervasyon bulunmuyor.'}
-              </p>
+                          {/* Filtreler */}
+              <ReservationFilters
+                activeFilter={activeFilter}
+                onFilterChange={setActiveFilter}
+                searchTerm={searchTerm}
+                onSearchChange={setSearchTerm}
+              />
+
+            {/* Rezervasyon Listesi */}
+            <div className="mt-6">
+              <ReservationList
+                reservations={filteredReservations}
+                onStatusChange={handleStatusChange}
+                onViewDetails={handleViewDetails}
+              />
             </div>
-          )}
-        </div>
+
+            {/* Boş Durum */}
+            {filteredReservations.length === 0 && (
+              <div className="text-center py-12">
+                <div className="text-gray-400 mb-4">
+                  <svg className="mx-auto h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                </div>
+                <h3 className="text-lg font-medium text-gray-900 mb-2">Rezervasyon Bulunamadı</h3>
+                <p className="text-gray-500">
+                  {searchTerm || activeFilter !== 'all' 
+                    ? 'Arama kriterlerinize uygun rezervasyon bulunamadı.'
+                    : 'Henüz rezervasyon bulunmuyor.'}
+                </p>
+              </div>
+            )}
+          </div>
+        </main>
       </div>
     </div>
   )
-}
+} 

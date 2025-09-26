@@ -31,64 +31,61 @@ export default function DashboardPage() {
   ]
 
   return (
-    <div className="flex h-screen bg-gray-50">
+    <div className="admin-page-container">
       <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
-      <div className="flex-1 flex flex-col overflow-hidden">
+      <div className="admin-main-content">
         <Header />
-        
-        <div className="flex-1 overflow-auto">
-          <div className="p-6">
-            <div className="max-w-7xl mx-auto">
-              {/* Page Header */}
-              <div className="mb-6">
-                <h1 className="text-2xl font-bold text-gray-900 flex items-center">
-                  <BarChart3 className="h-6 w-6 mr-2" />
-                  Dashboard
-                </h1>
-                <p className="text-gray-600 mt-1">Admin paneli genel bakış</p>
-              </div>
+        <div className="admin-content-wrapper">
+          {/* Page Header */}
+          <div className="mb-3">
+            <h1 className="admin-text-lg flex items-center">
+              <BarChart3 className="h-4 w-4 mr-2" />
+              Dashboard
+            </h1>
+            <p className="admin-text-xs mt-1">Admin paneli genel bakış</p>
+          </div>
 
-              {/* Stats Cards */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                {stats.map((stat) => {
-                  const Icon = stat.icon
-                  return (
-                    <div key={stat.name} className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                      <div className="flex items-center">
-                        <div className={`p-3 rounded-lg bg-${stat.color}-100`}>
-                          <Icon className={`h-6 w-6 text-${stat.color}-600`} />
-                        </div>
-                        <div className="ml-4">
-                          <p className="text-sm font-medium text-gray-600">{stat.name}</p>
-                          <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
-                        </div>
-                      </div>
+          {/* Stats Cards */}
+          <div className="admin-grid-4 mb-3">
+            {stats.map((stat) => {
+              const Icon = stat.icon
+              return (
+                <div key={stat.name} className="admin-card">
+                  <div className="flex items-center">
+                    <div className={`p-2 rounded bg-${stat.color}-100`}>
+                      <Icon className={`h-4 w-4 text-${stat.color}-600`} />
                     </div>
-                  )
-                })}
-              </div>
-
-              {/* Quick Actions */}
-              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Hızlı Erişim</h3>
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                  {quickActions.map((action) => {
-                    const Icon = action.icon
-                    return (
-                      <a
-                        key={action.name}
-                        href={action.href}
-                        className="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
-                      >
-                        <div className={`p-2 rounded-lg bg-${action.color}-100 mr-3`}>
-                          <Icon className={`h-5 w-5 text-${action.color}-600`} />
-                        </div>
-                        <span className="text-sm font-medium text-gray-900">{action.name}</span>
-                      </a>
-                    )
-                  })}
+                    <div className="ml-3">
+                      <p className="admin-text-xs">{stat.name}</p>
+                      <p className="admin-text-lg">{stat.value}</p>
+                    </div>
+                  </div>
                 </div>
-              </div>
+              )
+            })}
+          </div>
+
+          {/* Quick Actions */}
+          <div className="admin-card">
+            <div className="admin-card-header">
+              <h3 className="admin-card-title">Hızlı Erişim</h3>
+            </div>
+            <div className="admin-grid-4">
+              {quickActions.map((action) => {
+                const Icon = action.icon
+                return (
+                  <a
+                    key={action.name}
+                    href={action.href}
+                    className="admin-card-small hover:bg-gray-50 transition-colors flex items-center"
+                  >
+                    <div className={`p-1 rounded bg-${action.color}-100 mr-2`}>
+                      <Icon className={`h-3 w-3 text-${action.color}-600`} />
+                    </div>
+                    <span className="admin-text-xs">{action.name}</span>
+                  </a>
+                )
+              })}
             </div>
           </div>
         </div>

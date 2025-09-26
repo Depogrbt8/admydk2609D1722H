@@ -23,143 +23,96 @@ export default function AyarlarPage() {
   const [isSeoModalOpen, setIsSeoModalOpen] = useState(false)
 
   return (
-    <div className="flex h-screen bg-gray-100 w-full">
-      {/* Sidebar */}
+    <div className="admin-page-container">
       <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
-
-      {/* Sağ İçerik Alanı */}
-      <div className="flex-1 flex flex-col min-w-0 w-full">
-        {/* Header */}
+      <div className="admin-main-content">
         <Header />
-
-        {/* Ana İçerik */}
-        <main className="flex-1 p-4 w-full">
-          <div className="p-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="admin-content-wrapper">
+          <div className="admin-grid-3">
               {/* Site Ayarları Butonu */}
               <button
                 onClick={() => setIsSiteModalOpen(true)}
-                className="bg-white rounded-lg border border-gray-200 p-6 hover:bg-gray-50 transition-colors"
+                className="admin-card hover:bg-gray-50 transition-colors"
               >
-                <h2 className="text-lg font-medium text-gray-900 mb-2">Site Ayarları</h2>
-                <p className="text-sm text-gray-600">Site başlığı, iletişim bilgileri</p>
-              </button>
-
-              {/* SEO Ayarları Butonu */}
-              <button
-                onClick={() => setIsSeoModalOpen(true)}
-                className="bg-white rounded-lg border border-gray-200 p-6 hover:bg-gray-50 transition-colors"
-              >
-                <h2 className="text-lg font-medium text-gray-900 mb-2">SEO Ayarları</h2>
-                <p className="text-sm text-gray-600">Meta tags, sosyal medya, güvenlik</p>
+                <h2 className="admin-card-title mb-2">Site Ayarları</h2>
+                <p className="admin-text-xs">Genel site ayarları ve konfigürasyon</p>
               </button>
 
               {/* Güvenlik Ayarları Butonu */}
               <button
                 onClick={() => setIsSecurityModalOpen(true)}
-                className="bg-white rounded-lg border border-gray-200 p-6 hover:bg-gray-50 transition-colors"
+                className="admin-card hover:bg-gray-50 transition-colors"
               >
-                <h2 className="text-lg font-medium text-gray-900 mb-2">Güvenlik</h2>
-                <p className="text-sm text-gray-600">Şifre politikası, oturum süresi</p>
+                <h2 className="admin-card-title mb-2">Güvenlik</h2>
+                <p className="admin-text-xs">Güvenlik ayarları ve erişim kontrolü</p>
               </button>
 
               {/* Email Ayarları Butonu */}
               <button
                 onClick={() => setIsEmailModalOpen(true)}
-                className="bg-white rounded-lg border border-gray-200 p-6 hover:bg-gray-50 transition-colors"
+                className="admin-card hover:bg-gray-50 transition-colors"
               >
-                <h2 className="text-lg font-medium text-gray-900 mb-2">Email Ayarları</h2>
-                <p className="text-sm text-gray-600">SMTP ayarları, email türleri</p>
+                <h2 className="admin-card-title mb-2">Email</h2>
+                <p className="admin-text-xs">Email gönderimi ve template ayarları</p>
+              </button>
+
+              {/* API Ayarları Butonu */}
+              <button
+                onClick={() => setIsApiModalOpen(true)}
+                className="admin-card hover:bg-gray-50 transition-colors"
+              >
+                <h2 className="admin-card-title mb-2">API</h2>
+                <p className="admin-text-xs">API anahtarları ve entegrasyonlar</p>
+              </button>
+
+              {/* Ülke Kısıtlamaları Butonu */}
+              <button
+                onClick={() => setIsCountryModalOpen(true)}
+                className="admin-card hover:bg-gray-50 transition-colors"
+              >
+                <h2 className="admin-card-title mb-2">Ülke Kısıtlamaları</h2>
+                <p className="admin-text-xs">Erişim kısıtlamaları ve coğrafi engellemeler</p>
               </button>
 
               {/* Ajans Ayarları Butonu */}
               <button
                 onClick={() => setIsAgencyModalOpen(true)}
-                className="bg-white rounded-lg border border-gray-200 p-6 hover:bg-gray-50 transition-colors"
+                className="admin-card hover:bg-gray-50 transition-colors"
               >
-                <h2 className="text-lg font-medium text-gray-900 mb-2">Ajans Ayarları</h2>
-                <p className="text-sm text-gray-600">Ajans yönetimi ve komisyon ayarları</p>
+                <h2 className="admin-card-title mb-2">Ajans</h2>
+                <p className="admin-text-xs">Ajans bilgileri ve komisyon ayarları</p>
               </button>
 
-              {/* Admin Yönetimi Butonu */}
-              <a
-                href="/ayarlar/admin-yonetimi"
-                className="bg-white rounded-lg border border-gray-200 p-6 hover:bg-gray-50 transition-colors block"
-              >
-                <h2 className="text-lg font-medium text-gray-900 mb-2">Admin Yönetimi</h2>
-                <p className="text-sm text-gray-600">Admin listesi, yetki yönetimi</p>
-              </a>
-
-              {/* API Yönetimi Butonu */}
-              <button
-                onClick={() => setIsApiModalOpen(true)}
-                className="bg-white rounded-lg border border-gray-200 p-6 hover:bg-gray-50 transition-colors"
-              >
-                <h2 className="text-lg font-medium text-gray-900 mb-2">API Yönetimi</h2>
-                <p className="text-sm text-gray-600">API ayarlarını yönetin</p>
-              </button>
-
-              {/* Backup Butonu - Sistem sayfasına taşındı */}
-              <div className="bg-white rounded-lg border border-gray-200 p-6 opacity-50">
-                <h2 className="text-lg font-medium text-gray-900 mb-2">Backup</h2>
-                <p className="text-sm text-gray-600">Yedekleme sistemi Sistem sayfasına taşındı</p>
-              </div>
-
-              {/* Ülke Kısıtlaması Butonu */}
-              <button
-                onClick={() => setIsCountryModalOpen(true)}
-                className="bg-white rounded-lg border border-gray-200 p-6 hover:bg-gray-50 transition-colors"
-              >
-                <h2 className="text-lg font-medium text-gray-900 mb-2">Ülke Kısıtlaması</h2>
-                <p className="text-sm text-gray-600">Hangi ülkelerde hizmet verileceğini belirleyin</p>
-              </button>
-
-              {/* Duyuru Yönetimi Butonu */}
+              {/* Duyuru Ayarları Butonu */}
               <button
                 onClick={() => setIsAnnouncementModalOpen(true)}
-                className="bg-white rounded-lg border border-gray-200 p-6 hover:bg-gray-50 transition-colors"
+                className="admin-card hover:bg-gray-50 transition-colors"
               >
-                <h2 className="text-lg font-medium text-gray-900 mb-2">Duyuru Yönetimi</h2>
-                <p className="text-sm text-gray-600">Tüm adminlere duyuru gönderin</p>
+                <h2 className="admin-card-title mb-2">Duyurular</h2>
+                <p className="admin-text-xs">Sistem duyuruları ve bildirimler</p>
               </button>
-            </div>
+
+              {/* SEO Ayarları Butonu */}
+              <button
+                onClick={() => setIsSeoModalOpen(true)}
+                className="admin-card hover:bg-gray-50 transition-colors"
+              >
+                <h2 className="admin-card-title mb-2">SEO</h2>
+                <p className="admin-text-xs">Arama motoru optimizasyonu</p>
+              </button>
           </div>
-        </main>
+        </div>
       </div>
 
       {/* Modals */}
-      <ApiModal 
-        isOpen={isApiModalOpen} 
-        onClose={() => setIsApiModalOpen(false)} 
-      />
-      <CountryRestrictionModal 
-        isOpen={isCountryModalOpen} 
-        onClose={() => setIsCountryModalOpen(false)} 
-      />
-      <SiteSettingsModal 
-        isOpen={isSiteModalOpen} 
-        onClose={() => setIsSiteModalOpen(false)} 
-      />
-      <SecurityModal 
-        isOpen={isSecurityModalOpen} 
-        onClose={() => setIsSecurityModalOpen(false)} 
-      />
-      <EmailModal 
-        isOpen={isEmailModalOpen} 
-        onClose={() => setIsEmailModalOpen(false)} 
-      />
-      <AgencyModal 
-        isOpen={isAgencyModalOpen} 
-        onClose={() => setIsAgencyModalOpen(false)} 
-      />
-      <AnnouncementModal 
-        isOpen={isAnnouncementModalOpen} 
-        onClose={() => setIsAnnouncementModalOpen(false)} 
-      />
-      <SeoModal 
-        isOpen={isSeoModalOpen} 
-        onClose={() => setIsSeoModalOpen(false)} 
-      />
+      <ApiModal isOpen={isApiModalOpen} onClose={() => setIsApiModalOpen(false)} />
+      <CountryRestrictionModal isOpen={isCountryModalOpen} onClose={() => setIsCountryModalOpen(false)} />
+      <SiteSettingsModal isOpen={isSiteModalOpen} onClose={() => setIsSiteModalOpen(false)} />
+      <SecurityModal isOpen={isSecurityModalOpen} onClose={() => setIsSecurityModalOpen(false)} />
+      <EmailModal isOpen={isEmailModalOpen} onClose={() => setIsEmailModalOpen(false)} />
+      <AgencyModal isOpen={isAgencyModalOpen} onClose={() => setIsAgencyModalOpen(false)} />
+      <AnnouncementModal isOpen={isAnnouncementModalOpen} onClose={() => setIsAnnouncementModalOpen(false)} />
+      <SeoModal isOpen={isSeoModalOpen} onClose={() => setIsSeoModalOpen(false)} />
     </div>
   )
-} 
+}

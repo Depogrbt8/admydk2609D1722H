@@ -98,17 +98,17 @@ export default function DatabaseBackupSystem() {
   }
 
   return (
-    <div className="border rounded p-4">
-      <div className="flex items-center justify-between mb-3">
+    <div className="admin-card">
+      <div className="admin-card-header">
         <div>
-          <h3 className="text-base font-semibold text-gray-900">🗄️ Database Yedekleme Sistemi</h3>
-          <p className="text-xs text-gray-500 mt-1">Incremental Backup - Her saatte bir otomatik</p>
+          <h3 className="admin-card-title">🗄️ Database Yedekleme Sistemi</h3>
+          <p className="admin-card-subtitle">Incremental Backup - Her saatte bir otomatik</p>
         </div>
         <div className="flex items-center space-x-2">
-          <div className={`w-2 h-2 rounded-full ${
-            status?.isActive ? 'bg-green-500' : 'bg-red-500'
+          <div className={`admin-status-dot ${
+            status?.isActive ? 'admin-status-dot-success' : 'admin-status-dot-error'
           }`}></div>
-          <span className="text-xs text-gray-500">
+          <span className="admin-text-xs">
             {status?.isActive ? 'Aktif' : 'Pasif'}
           </span>
         </div>
@@ -116,83 +116,83 @@ export default function DatabaseBackupSystem() {
 
       {/* Kaynak Kartları (Monitor tasarımı) */}
       {sources?.length > 0 && (
-        <div className="grid gap-2 md:grid-cols-4 mb-3">
+        <div className="admin-grid-4 mb-3">
           {sources.map((s) => (
-            <div key={s.key} className={`border rounded p-2 ${s.active ? 'border-green-300' : 'border-red-300'}`}>
-              <div className={`text-[10px] text-gray-500 ${s.active ? 'text-green-600' : 'text-red-500'}`}>{s.active ? 'Aktif' : 'Pasif'}</div>
-              <div className="text-sm font-semibold text-gray-900">{s.title}</div>
-              <div className="text-[10px] text-gray-500">{s.pulledInfo}</div>
+            <div key={s.key} className={`admin-card-small ${s.active ? 'border-green-300' : 'border-red-300'}`}>
+              <div className={`admin-text-xs ${s.active ? 'text-green-600' : 'text-red-500'}`}>{s.active ? 'Aktif' : 'Pasif'}</div>
+              <div className="admin-text-sm">{s.title}</div>
+              <div className="admin-text-xs">{s.pulledInfo}</div>
             </div>
           ))}
         </div>
       )}
       {/* Güvenlik Bölümü */}
       {security && (
-        <div className="border rounded p-3">
-          <div className="flex items-center justify-between mb-2">
-            <h4 className="text-sm font-medium text-gray-900">
+        <div className="admin-card-small">
+          <div className="admin-card-header">
+            <h4 className="admin-card-title">
               🛡️ Güvenlik Durumu
             </h4>
-            <div className={`text-xs px-2 py-0.5 rounded ${
-              security.overallScore >= 90 ? 'bg-green-100 text-green-700' :
-              security.overallScore >= 70 ? 'bg-yellow-100 text-yellow-700' :
-              'bg-red-100 text-red-700'
+            <div className={`admin-badge ${
+              security.overallScore >= 90 ? 'admin-badge-success' :
+              security.overallScore >= 70 ? 'admin-badge-warning' :
+              'admin-badge-error'
             }`}>
               Skor: {security.overallScore}/100
             </div>
           </div>
           
-          <div className="grid gap-2 md:grid-cols-4">
+          <div className="admin-grid-4">
             {/* Aktif Saldırılar */}
-            <div className={`border rounded p-2 ${security.realTimeThreats?.activeAttacks > 5 ? 'border-red-300' : 'border-gray-200'}`}>
+            <div className={`admin-card-small ${security.realTimeThreats?.activeAttacks > 5 ? 'border-red-300' : 'border-gray-200'}`}>
               <div className="flex items-center justify-between">
-                <div className="text-[10px] text-gray-500">Aktif Saldırı</div>
+                <div className="admin-text-xs">Aktif Saldırı</div>
                 {security.realTimeThreats?.activeAttacks > 5 && (
                   <span className="text-red-500 text-[10px]">⚠️</span>
                 )}
               </div>
-              <div className="text-sm font-semibold text-gray-900">
+              <div className="admin-text-sm">
                 {security.realTimeThreats?.activeAttacks || 0}
               </div>
             </div>
 
             {/* Engellenen İstekler */}
-            <div className={`border rounded p-2 ${security.realTimeThreats?.blockedRequests > 500 ? 'border-red-300' : 'border-gray-200'}`}>
+            <div className={`admin-card-small ${security.realTimeThreats?.blockedRequests > 500 ? 'border-red-300' : 'border-gray-200'}`}>
               <div className="flex items-center justify-between">
-                <div className="text-[10px] text-gray-500">Engellenen</div>
+                <div className="admin-text-xs">Engellenen</div>
                 {security.realTimeThreats?.blockedRequests > 500 && (
                   <span className="text-yellow-500 text-[10px]">⚠️</span>
                 )}
               </div>
-              <div className="text-sm font-semibold text-gray-900">
+              <div className="admin-text-sm">
                 {security.realTimeThreats?.blockedRequests || 0}
               </div>
             </div>
 
             {/* Rate Limit */}
-            <div className={`border rounded p-2 ${security.rateLimitingStatus?.blockedRequests > 100 ? 'border-red-300' : 'border-gray-200'}`}>
+            <div className={`admin-card-small ${security.rateLimitingStatus?.blockedRequests > 100 ? 'border-red-300' : 'border-gray-200'}`}>
               <div className="flex items-center justify-between">
-                <div className="text-[10px] text-gray-500">Rate Limit</div>
+                <div className="admin-text-xs">Rate Limit</div>
                 {security.rateLimitingStatus?.blockedRequests > 100 && (
                   <span className="text-orange-500 text-[10px]">⚠️</span>
                 )}
               </div>
-              <div className="text-sm font-semibold text-gray-900">
+              <div className="admin-text-sm">
                 {security.rateLimitingStatus?.blockedRequests || 0}
               </div>
             </div>
 
             {/* Son Tehdit */}
-            <div className="border rounded p-2 border-gray-200">
-              <div className="text-[10px] text-gray-500">Son Tehdit</div>
-              <div className="text-sm font-semibold text-gray-900 truncate">
+            <div className="admin-card-small border-gray-200">
+              <div className="admin-text-xs">Son Tehdit</div>
+              <div className="admin-text-sm truncate">
                 {security.realTimeThreats?.lastThreat || 'Yok'}
               </div>
             </div>
           </div>
 
           {/* Durum Mesajı */}
-          <div className="mt-2 text-[10px] text-gray-500 text-center">
+          <div className="mt-2 admin-text-xs text-center">
             {security.message || 'Güvenlik sistemleri izleniyor'}
           </div>
         </div>

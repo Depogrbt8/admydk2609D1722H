@@ -1,5 +1,5 @@
 'use client'
-import { Calendar, Clock, User, Layout, Megaphone, CreditCard, FileText, Settings, BookOpen, BarChart3, Search, Mail, Code, Globe, Briefcase } from 'lucide-react'
+import { Calendar, Clock, User, Layout, Megaphone, CreditCard, FileText, Settings, BookOpen, BarChart3, Search, Mail, Code, Globe } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
@@ -14,43 +14,43 @@ export default function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
   return (
     <div className="w-64 bg-white shadow-lg flex flex-col h-full">
       {/* Zaman/Tarih Alanı */}
-      <div className="p-4 border-b border-gray-200 flex-shrink-0">
+      <div className="p-3 border-b border-gray-200 flex-shrink-0">
         <div className="flex items-center space-x-2 text-gray-600">
-          <Calendar className="h-4 w-4" />
-          <span className="text-sm">19 Temmuz 2024</span>
+          <Calendar className="h-3 w-3" />
+          <span className="admin-text-xs">19 Temmuz 2024</span>
         </div>
         <div className="flex items-center space-x-2 text-gray-600 mt-1">
-          <Clock className="h-4 w-4" />
-          <span className="text-sm">18:30</span>
+          <Clock className="h-3 w-3" />
+          <span className="admin-text-xs">18:30</span>
         </div>
       </div>
 
       {/* Admin Bilgisi Alanı */}
-      <div className="p-4 border-b border-gray-200 flex-shrink-0">
-        <div className="flex items-center space-x-3">
-          <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
-            <User className="h-4 w-4 text-white" />
+      <div className="p-3 border-b border-gray-200 flex-shrink-0">
+        <div className="flex items-center space-x-2">
+          <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center">
+            <User className="h-3 w-3 text-white" />
           </div>
           <div>
-            <div className="text-sm font-medium text-gray-900">Admin</div>
-            <div className="text-xs text-gray-500">Yönetici</div>
+            <div className="admin-text-xs">Admin</div>
+            <div className="admin-text-xs">Yönetici</div>
           </div>
         </div>
       </div>
 
       {/* Sekmeler - Scrollable */}
       <div className="flex-1 overflow-y-auto">
-        <nav className="p-4 space-y-2">
+        <nav className="p-3 admin-space-y-2">
           <Link 
             href="/dashboard"
             onClick={() => setActiveTab('dashboard')}
-            className={`w-full flex items-center space-x-3 px-3 py-2 text-sm font-medium rounded-md ${
+            className={`w-full flex items-center space-x-2 px-2 py-1 admin-text-xs rounded ${
               pathname === '/dashboard' 
                 ? 'text-gray-900 bg-blue-50' 
                 : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
             }`}
           >
-            <BarChart3 className="h-4 w-4" />
+            <BarChart3 className="h-3 w-3" />
             <span>Dashboard</span>
           </Link>
           <Link 
@@ -62,7 +62,7 @@ export default function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
                 : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
             }`}
           >
-            <Layout className="h-4 w-4" />
+            <Layout className="h-3 w-3" />
             <span>Sistem</span>
           </Link>
           <Link 
@@ -74,7 +74,7 @@ export default function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
                 : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
             }`}
           >
-            <User className="h-4 w-4" />
+            <User className="h-3 w-3" />
             <span>Kullanıcılar</span>
           </Link>
           <Link 
@@ -86,7 +86,7 @@ export default function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
                 : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
             }`}
           >
-            <Megaphone className="h-4 w-4" />
+            <Megaphone className="h-3 w-3" />
             <span>Kampanyalar</span>
           </Link>
           <Link 
@@ -98,7 +98,7 @@ export default function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
                 : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
             }`}
           >
-            <Search className="h-4 w-4" />
+            <Search className="h-3 w-3" />
             <span>SEO</span>
           </Link>
           <Link 
@@ -110,7 +110,7 @@ export default function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
                 : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
             }`}
           >
-            <Mail className="h-4 w-4" />
+            <Mail className="h-3 w-3" />
             <span>Email</span>
           </Link>
           <Link 
@@ -122,7 +122,7 @@ export default function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
                 : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
             }`}
           >
-            <Code className="h-4 w-4" />
+            <Code className="h-3 w-3" />
             <span>API</span>
           </Link>
           <Link 
@@ -134,20 +134,8 @@ export default function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
                 : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
             }`}
           >
-            <Globe className="h-4 w-4" />
+            <Globe className="h-3 w-3" />
             <span>Dış API</span>
-          </Link>
-          <Link 
-            href="/calismalarim"
-            onClick={() => setActiveTab('calismalarim')}
-            className={`w-full flex items-center space-x-3 px-3 py-2 text-sm font-medium rounded-md ${
-              pathname === '/calismalarim' 
-                ? 'text-gray-900 bg-blue-50' 
-                : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
-            }`}
-          >
-            <Briefcase className="h-4 w-4" />
-            <span>Çalışmalarım</span>
           </Link>
           <Link 
             href="/rezervasyonlar"
@@ -158,7 +146,7 @@ export default function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
                 : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
             }`}
           >
-            <BookOpen className="h-4 w-4" />
+            <BookOpen className="h-3 w-3" />
             <span>Rezervasyonlar</span>
           </Link>
           <Link 
@@ -170,7 +158,7 @@ export default function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
                 : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
             }`}
           >
-            <Calendar className="h-4 w-4" />
+            <Calendar className="h-3 w-3" />
             <span>Uçuşlar</span>
           </Link>
           <Link 
@@ -182,7 +170,7 @@ export default function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
                 : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
             }`}
           >
-            <CreditCard className="h-4 w-4" />
+            <CreditCard className="h-3 w-3" />
             <span>Ödemeler</span>
           </Link>
           <Link 
@@ -194,7 +182,7 @@ export default function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
                 : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
             }`}
           >
-            <FileText className="h-4 w-4" />
+            <FileText className="h-3 w-3" />
             <span>Raporlar</span>
           </Link>
           <Link 
@@ -206,7 +194,7 @@ export default function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
                 : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
             }`}
           >
-            <BarChart3 className="h-4 w-4" />
+            <BarChart3 className="h-3 w-3" />
             <span>İstatistikler</span>
           </Link>
           <Link 
@@ -218,7 +206,7 @@ export default function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
                 : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
             }`}
           >
-            <Settings className="h-4 w-4" />
+            <Settings className="h-3 w-3" />
             <span>Ayarlar</span>
           </Link>
         </nav>

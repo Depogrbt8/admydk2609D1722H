@@ -7,25 +7,23 @@ export default function RaporlarPage() {
   const [activeTab, setActiveTab] = useState('raporlar')
 
   return (
-    <div className="flex h-screen bg-gray-100 w-full">
+    <div className="admin-page-container">
       {/* Sidebar */}
       <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
 
       {/* Sağ İçerik Alanı */}
-      <div className="flex-1 flex flex-col min-w-0 w-full">
+      <div className="admin-main-content">
         {/* Header */}
         <Header />
 
         {/* Ana İçerik */}
-        <main className="flex-1 p-4 w-full">
-          <div className="w-full space-y-6 min-w-0">
-            <div className="bg-white rounded-lg shadow p-4 w-full">
-              <h3 className="text-sm font-medium text-gray-900 mb-3">Raporlar</h3>
-              <p className="text-sm text-gray-600">Bu özellik henüz geliştiriliyor...</p>
-            </div>
+        <div className="admin-content-wrapper">
+          <div className="admin-card">
+            <h3 className="admin-text-sm mb-2">Raporlar</h3>
+            <p className="admin-text-xs">Bu özellik henüz geliştiriliyor...</p>
           </div>
-        </main>
+        </div>
       </div>
     </div>
   )
-} 
+}

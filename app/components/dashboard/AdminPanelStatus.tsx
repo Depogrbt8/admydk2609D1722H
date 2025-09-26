@@ -98,13 +98,13 @@ export default function AdminPanelStatus() {
   }
 
   return (
-    <div className="border rounded p-4">
-      <div className="flex items-center justify-between mb-3">
-        <h3 className="text-base font-semibold text-gray-900">Admin Panel Durumu</h3>
+    <div className="admin-card">
+      <div className="admin-card-header">
+        <h3 className="admin-card-title">Admin Panel Durumu</h3>
         <button 
           onClick={handleRefresh}
           disabled={refreshing}
-          className="flex items-center space-x-2 px-2 py-1 text-xs bg-blue-50 text-blue-700 rounded hover:bg-blue-100 disabled:opacity-50"
+          className="admin-btn admin-btn-primary flex items-center space-x-1"
         >
           <RefreshCw className={`h-3 w-3 ${refreshing ? 'animate-spin' : ''}`} />
           <span>Yenile</span>
@@ -119,8 +119,8 @@ export default function AdminPanelStatus() {
 
       {/* Özet Satırı */}
       {metrics && health && (
-        <div className="grid gap-2 md:grid-cols-6 mb-3">
-          <div className={`border rounded p-2 ${metrics.cpu.usage < 70 ? 'border-green-300' : metrics.cpu.usage < 85 ? 'border-yellow-300' : 'border-red-300'}`}>
+        <div className="admin-grid-6 mb-3">
+          <div className={`admin-card-small ${metrics.cpu.usage < 70 ? 'border-green-300' : metrics.cpu.usage < 85 ? 'border-yellow-300' : 'border-red-300'}`}>
             <div className="flex items-center justify-between mb-1">
               <div className="flex items-center space-x-1">
                 <Cpu className="h-3 w-3 text-gray-600" />
@@ -128,8 +128,8 @@ export default function AdminPanelStatus() {
               </div>
               {chip(health.components.cpu.color, health.components.cpu.status)}
             </div>
-            <div className="text-sm font-semibold text-gray-900">%{Math.round(metrics.cpu.usage)}</div>
-            <div className="text-[10px] text-gray-500">Çekirdek: {metrics.cpu.cores}</div>
+            <div className="admin-text-sm">%{Math.round(metrics.cpu.usage)}</div>
+            <div className="admin-text-xs">Çekirdek: {metrics.cpu.cores}</div>
             <div className="w-full bg-gray-200 rounded-full h-1 mt-1">
               <div 
                 className={`h-1 rounded-full ${
@@ -141,7 +141,7 @@ export default function AdminPanelStatus() {
             </div>
           </div>
 
-          <div className={`border rounded p-2 ${metrics.memory.usage < 80 ? 'border-green-300' : metrics.memory.usage < 90 ? 'border-yellow-300' : 'border-red-300'}`}>
+          <div className={`admin-card-small ${metrics.memory.usage < 80 ? 'border-green-300' : metrics.memory.usage < 90 ? 'border-yellow-300' : 'border-red-300'}`}>
             <div className="flex items-center justify-between mb-1">
               <div className="flex items-center space-x-1">
                 <Activity className="h-3 w-3 text-gray-600" />
@@ -149,8 +149,8 @@ export default function AdminPanelStatus() {
               </div>
               {chip(health.components.memory.color, health.components.memory.status)}
             </div>
-            <div className="text-sm font-semibold text-gray-900">%{Math.round(metrics.memory.usage)}</div>
-            <div className="text-[10px] text-gray-500">{metrics.memory.used}GB / {metrics.memory.total}GB</div>
+            <div className="admin-text-sm">%{Math.round(metrics.memory.usage)}</div>
+            <div className="admin-text-xs">{metrics.memory.used}GB / {metrics.memory.total}GB</div>
             <div className="w-full bg-gray-200 rounded-full h-1 mt-1">
               <div 
                 className={`h-1 rounded-full ${
@@ -162,7 +162,7 @@ export default function AdminPanelStatus() {
             </div>
           </div>
 
-          <div className={`border rounded p-2 ${metrics.disk.usage < 85 ? 'border-green-300' : metrics.disk.usage < 95 ? 'border-yellow-300' : 'border-red-300'}`}>
+          <div className={`admin-card-small ${metrics.disk.usage < 85 ? 'border-green-300' : metrics.disk.usage < 95 ? 'border-yellow-300' : 'border-red-300'}`}>
             <div className="flex items-center justify-between mb-1">
               <div className="flex items-center space-x-1">
                 <HardDrive className="h-3 w-3 text-gray-600" />
@@ -170,8 +170,8 @@ export default function AdminPanelStatus() {
               </div>
               {chip(health.components.disk.color, health.components.disk.status)}
             </div>
-            <div className="text-sm font-semibold text-gray-900">%{Math.round(metrics.disk.usage)}</div>
-            <div className="text-[10px] text-gray-500">{metrics.disk.used}GB / {metrics.disk.total}GB</div>
+            <div className="admin-text-sm">%{Math.round(metrics.disk.usage)}</div>
+            <div className="admin-text-xs">{metrics.disk.used}GB / {metrics.disk.total}GB</div>
             <div className="w-full bg-gray-200 rounded-full h-1 mt-1">
               <div 
                 className={`h-1 rounded-full ${
@@ -183,7 +183,7 @@ export default function AdminPanelStatus() {
             </div>
           </div>
 
-          <div className={`border rounded p-2 ${metrics.load.average < 1 ? 'border-green-300' : metrics.load.average < 2 ? 'border-yellow-300' : 'border-red-300'}`}>
+          <div className={`admin-card-small ${metrics.load.average < 1 ? 'border-green-300' : metrics.load.average < 2 ? 'border-yellow-300' : 'border-red-300'}`}>
             <div className="flex items-center justify-between mb-1">
               <div className="flex items-center space-x-1">
                 <Gauge className="h-3 w-3 text-gray-600" />
@@ -191,11 +191,11 @@ export default function AdminPanelStatus() {
               </div>
               {chip(health.components.load.color, health.components.load.status)}
             </div>
-            <div className="text-sm font-semibold text-gray-900">{metrics.load.average.toFixed(2)}</div>
-            <div className="text-[10px] text-gray-500 capitalize">{metrics.load.status}</div>
+            <div className="admin-text-sm">{metrics.load.average.toFixed(2)}</div>
+            <div className="admin-text-xs capitalize">{metrics.load.status}</div>
           </div>
 
-          <div className="border rounded p-2 border-gray-200">
+          <div className="admin-card-small border-gray-200">
             <div className="flex items-center justify-between mb-1">
               <div className="flex items-center space-x-1">
                 <Network className="h-3 w-3 text-gray-600" />
@@ -203,11 +203,11 @@ export default function AdminPanelStatus() {
               </div>
               <span className="px-1 py-0.5 rounded text-[10px] font-medium bg-blue-100 text-blue-800">Aktif</span>
             </div>
-            <div className="text-sm font-semibold text-gray-900">↓ {metrics.network.received.toFixed(2)}GB</div>
-            <div className="text-[10px] text-gray-500">↑ {metrics.network.sent.toFixed(2)}GB</div>
+            <div className="admin-text-sm">↓ {metrics.network.received.toFixed(2)}GB</div>
+            <div className="admin-text-xs">↑ {metrics.network.sent.toFixed(2)}GB</div>
           </div>
 
-          <div className="border rounded p-2 border-gray-200">
+          <div className="admin-card-small border-gray-200">
             <div className="flex items-center justify-between mb-1">
               <div className="flex items-center space-x-1">
                 <Clock className="h-3 w-3 text-gray-600" />
@@ -215,27 +215,27 @@ export default function AdminPanelStatus() {
               </div>
               <span className="px-1 py-0.5 rounded text-[10px] font-medium bg-green-100 text-green-800">Aktif</span>
             </div>
-            <div className="text-sm font-semibold text-gray-900">Sistem Çalışıyor</div>
-            <div className="text-[10px] text-gray-500">Son güncelleme: {new Date(metrics.timestamp).toLocaleTimeString('tr-TR')}</div>
+            <div className="admin-text-sm">Sistem Çalışıyor</div>
+            <div className="admin-text-xs">Son güncelleme: {new Date(metrics.timestamp).toLocaleTimeString('tr-TR')}</div>
           </div>
         </div>
       )}
 
       {/* Genel Sağlık */}
       {health && (
-        <div className="border rounded p-3">
-          <div className="flex items-center justify-between mb-2">
+        <div className="admin-card-small">
+          <div className="admin-card-header">
             <div className="flex items-center space-x-1">
               <Server className="h-4 w-4 text-gray-700" />
-              <span className="text-sm font-medium text-gray-900">Genel Sağlık</span>
+              <span className="admin-card-title">Genel Sağlık</span>
             </div>
             {chip(health.overall.color, health.overall.status)}
           </div>
-          <div className="text-sm text-gray-700 mb-2">
+          <div className="admin-text-sm mb-2">
             Skor: {health.overall.score}/100 — {health.overall.message}
           </div>
           {health.recommendations?.length > 0 && (
-            <ul className="list-disc list-inside text-[10px] text-gray-500 space-y-1">
+            <ul className="list-disc list-inside admin-text-xs space-y-1">
               {health.recommendations.map((r, i) => (
                 <li key={i}>{r}</li>
               ))}
@@ -245,7 +245,7 @@ export default function AdminPanelStatus() {
       )}
 
       {/* Zaman damgası */}
-      <div className="text-[10px] text-gray-500">
+      <div className="admin-text-xs">
         Güncelleme: {metrics ? new Date(metrics.timestamp).toLocaleString('tr-TR') : '-'}
       </div>
     </div>

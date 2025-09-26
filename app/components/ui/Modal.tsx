@@ -31,28 +31,28 @@ export default function Modal({ isOpen, onClose, title, children }: ModalProps) 
   if (!isOpen) return null
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
+    <div className="admin-modal-overlay">
       {/* Backdrop */}
       <div 
-        className="absolute inset-0 bg-black bg-opacity-50"
+        className="absolute inset-0 bg-black bg-opacity-30"
         onClick={onClose}
       />
       
       {/* Modal */}
-      <div className="relative bg-white rounded-lg shadow-xl max-w-md w-full mx-4 max-h-[90vh] overflow-y-auto">
+      <div className="admin-modal">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b">
-          <h2 className="text-xl font-semibold text-gray-900">{title}</h2>
+        <div className="admin-modal-header">
+          <h2 className="admin-modal-title">{title}</h2>
           <button
             onClick={onClose}
             className="text-gray-400 hover:text-gray-600 transition-colors"
           >
-            <X className="h-6 w-6" />
+            <X className="h-4 w-4" />
           </button>
         </div>
         
         {/* Content */}
-        <div className="p-6">
+        <div className="admin-modal-content">
           {children}
         </div>
       </div>
@@ -133,16 +133,16 @@ export function MaintenanceModal({
             </div>
           </div>
 
-          <div className="flex space-x-3 pt-4">
+          <div className="admin-modal-footer">
             <button
               onClick={onToggleMaintenance}
-              className="flex-1 bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700 transition-colors"
+              className="admin-btn admin-btn-primary"
             >
               Bakım Modunu Kapat
             </button>
             <button
               onClick={onClose}
-              className="flex-1 bg-gray-300 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-400 transition-colors"
+              className="admin-btn admin-btn-secondary"
             >
               Kapat
             </button>
@@ -166,16 +166,16 @@ export function MaintenanceModal({
             </ul>
           </div>
 
-          <div className="flex space-x-3 pt-4">
+          <div className="admin-modal-footer">
             <button
               onClick={onToggleMaintenance}
-              className="flex-1 bg-orange-600 text-white py-2 px-4 rounded-md hover:bg-orange-700 transition-colors"
+              className="admin-btn admin-btn-primary"
             >
               Bakım Modunu Aç
             </button>
             <button
               onClick={onClose}
-              className="flex-1 bg-gray-300 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-400 transition-colors"
+              className="admin-btn admin-btn-secondary"
             >
               Kapat
             </button>

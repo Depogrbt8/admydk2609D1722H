@@ -230,18 +230,18 @@ export default function UserList({ users, onUserClick, onUserDelete, onBulkActio
   return (
     <div className="h-full flex flex-col space-y-4">
       {/* Filtreleme ve Arama */}
-      <div className="bg-white rounded-lg shadow p-4 flex-shrink-0">
-        <div className="flex flex-col md:flex-row gap-4">
+      <div className="admin-card flex-shrink-0">
+        <div className="flex flex-col lg:flex-row gap-3 items-end">
           {/* Arama */}
-          <div className="flex-1">
-            <label className="block text-sm font-medium text-gray-700 mb-2">Arama</label>
+          <div className="flex-1 w-full lg:w-auto">
+            <label className="admin-form-label">Arama</label>
             <div className="relative">
               <input 
                 type="text" 
                 placeholder="Kullanıcı adı, email veya telefon ara..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="admin-form-input pr-10"
               />
               <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
                 <svg className="h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -252,13 +252,13 @@ export default function UserList({ users, onUserClick, onUserDelete, onBulkActio
           </div>
 
           {/* Filtreleme */}
-          <div className="flex gap-2">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Durum</label>
+          <div className="flex flex-wrap gap-2 w-full lg:w-auto">
+            <div className="min-w-[120px]">
+              <label className="admin-form-label">Durum</label>
               <select 
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
-                className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="admin-form-select"
               >
                 <option>Tümü</option>
                 <option>Aktif</option>
@@ -266,12 +266,12 @@ export default function UserList({ users, onUserClick, onUserDelete, onBulkActio
                 <option>Beklemede</option>
               </select>
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Yaş</label>
+            <div className="min-w-[100px]">
+              <label className="admin-form-label">Yaş</label>
               <select 
                 value={ageFilter}
                 onChange={(e) => setAgeFilter(e.target.value)}
-                className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="admin-form-select"
               >
                 <option>Tümü</option>
                 <option>18-25</option>
@@ -280,12 +280,12 @@ export default function UserList({ users, onUserClick, onUserDelete, onBulkActio
                 <option>46+</option>
               </select>
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Ülke</label>
+            <div className="min-w-[120px]">
+              <label className="admin-form-label">Ülke</label>
               <select 
                 value={countryFilter}
                 onChange={(e) => setCountryFilter(e.target.value)}
-                className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="admin-form-select"
               >
                 <option>Tümü</option>
                 <option>Türkiye</option>
@@ -296,12 +296,12 @@ export default function UserList({ users, onUserClick, onUserDelete, onBulkActio
                 <option>Danimarka</option>
               </select>
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Memleket</label>
+            <div className="min-w-[120px]">
+              <label className="admin-form-label">Memleket</label>
               <select 
                 value={hometownFilter}
                 onChange={(e) => setHometownFilter(e.target.value)}
-                className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="admin-form-select"
               >
                 <option>Tümü</option>
                 <option>İstanbul</option>
@@ -314,12 +314,12 @@ export default function UserList({ users, onUserClick, onUserDelete, onBulkActio
                 <option>Gaziantep</option>
               </select>
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Sıralama</label>
+            <div className="min-w-[120px]">
+              <label className="admin-form-label">Sıralama</label>
               <select 
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
-                className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="admin-form-select"
               >
                 <option>En Yeni</option>
                 <option>En Eski</option>

@@ -24,12 +24,10 @@ export default function UserModal({ user, isOpen, onClose }: UserModalProps) {
   if (!isOpen || !user) return null
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg shadow-xl w-11/12 max-w-6xl max-h-[90vh] overflow-y-auto">
-
-
+    <div className="admin-modal-overlay">
+      <div className="admin-modal w-11/12 max-w-6xl max-h-[90vh] overflow-y-auto">
         {/* Modal Content */}
-        <div className="p-6">
+        <div className="admin-modal-content">
 
           <div className="space-y-6">
             {/* Hesap Bilgileri - Başta */}
@@ -150,16 +148,16 @@ export default function UserModal({ user, isOpen, onClose }: UserModalProps) {
         </div>
 
         {/* Modal Footer */}
-        <div className="flex items-center justify-end space-x-3 p-6 border-t border-gray-200">
+        <div className="admin-modal-footer">
           <button 
             onClick={onClose}
-            className="flex items-center space-x-2 px-4 py-2 text-sm text-gray-600 hover:text-gray-800"
+            className="admin-btn admin-btn-secondary flex items-center space-x-1"
           >
-            <X className="h-4 w-4" />
+            <X className="h-3 w-3" />
             <span>Kapat</span>
           </button>
-          <button className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700">
-            <Save className="h-4 w-4" />
+          <button className="admin-btn admin-btn-primary flex items-center space-x-1">
+            <Save className="h-3 w-3" />
             <span>Değişiklikleri Kaydet</span>
           </button>
         </div>

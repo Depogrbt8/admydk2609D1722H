@@ -134,16 +134,16 @@ export default function MainSiteStatus() {
   }
 
   return (
-    <div className="border rounded p-4">
-      <div className="flex items-center justify-between mb-3">
+    <div className="admin-card">
+      <div className="admin-card-header">
         <div className="flex items-center space-x-1">
           <Globe className="h-4 w-4 text-blue-600" />
-          <h3 className="text-base font-semibold text-gray-900">Ana Site Durumu</h3>
+          <h3 className="admin-card-title">Ana Site Durumu</h3>
         </div>
         <button 
           onClick={handleRefresh}
           disabled={refreshing}
-          className="flex items-center space-x-2 px-2 py-1 text-xs bg-blue-50 text-blue-700 rounded hover:bg-blue-100 disabled:opacity-50"
+          className="admin-btn admin-btn-primary flex items-center space-x-1"
         >
           <RefreshCw className={`h-3 w-3 ${refreshing ? 'animate-spin' : ''}`} />
           <span>Yenile</span>
@@ -161,8 +161,8 @@ export default function MainSiteStatus() {
 
       {/* Ana Site Özet */}
       {metrics && health && (
-        <div className="grid gap-2 md:grid-cols-6 mb-3">
-          <div className={`border rounded p-2 ${health.metrics.cpuUsage < 60 ? 'border-green-300' : health.metrics.cpuUsage < 80 ? 'border-yellow-300' : 'border-red-300'}`}>
+        <div className="admin-grid-6 mb-3">
+          <div className={`admin-card-small ${health.metrics.cpuUsage < 60 ? 'border-green-300' : health.metrics.cpuUsage < 80 ? 'border-yellow-300' : 'border-red-300'}`}>
             <div className="flex items-center justify-between mb-1">
               <div className="flex items-center space-x-1">
                 <Cpu className="h-3 w-3 text-gray-600" />
@@ -188,7 +188,7 @@ export default function MainSiteStatus() {
             </div>
           </div>
 
-          <div className={`border rounded p-2 ${health.metrics.memoryUsage < 80 ? 'border-green-300' : health.metrics.memoryUsage < 90 ? 'border-yellow-300' : 'border-red-300'}`}>
+          <div className={`admin-card-small ${health.metrics.memoryUsage < 80 ? 'border-green-300' : health.metrics.memoryUsage < 90 ? 'border-yellow-300' : 'border-red-300'}`}>
             <div className="flex items-center justify-between mb-1">
               <div className="flex items-center space-x-1">
                 <Activity className="h-3 w-3 text-gray-600" />
@@ -214,7 +214,7 @@ export default function MainSiteStatus() {
             </div>
           </div>
 
-          <div className={`border rounded p-2 ${health.metrics.diskUsage < 85 ? 'border-green-300' : health.metrics.diskUsage < 95 ? 'border-yellow-300' : 'border-red-300'}`}>
+          <div className={`admin-card-small ${health.metrics.diskUsage < 85 ? 'border-green-300' : health.metrics.diskUsage < 95 ? 'border-yellow-300' : 'border-red-300'}`}>
             <div className="flex items-center justify-between mb-1">
               <div className="flex items-center space-x-1">
                 <HardDrive className="h-3 w-3 text-gray-600" />
@@ -240,7 +240,7 @@ export default function MainSiteStatus() {
             </div>
           </div>
 
-          <div className={`border rounded p-2 ${health.metrics.loadAverage < 1 ? 'border-green-300' : health.metrics.loadAverage < 2 ? 'border-yellow-300' : 'border-red-300'}`}>
+          <div className={`admin-card-small ${health.metrics.loadAverage < 1 ? 'border-green-300' : health.metrics.loadAverage < 2 ? 'border-yellow-300' : 'border-red-300'}`}>
             <div className="flex items-center justify-between mb-1">
               <div className="flex items-center space-x-1">
                 <Gauge className="h-3 w-3 text-gray-600" />
@@ -257,7 +257,7 @@ export default function MainSiteStatus() {
             <div className="text-[10px] text-gray-500">Ortalama yük</div>
           </div>
 
-          <div className={`border rounded p-2 ${metrics.serverStatus === 'active' ? 'border-green-300' : 'border-red-300'}`}>
+          <div className={`admin-card-small ${metrics.serverStatus === 'active' ? 'border-green-300' : 'border-red-300'}`}>
             <div className="flex items-center justify-between mb-1">
               <div className="flex items-center space-x-1">
                 <Network className="h-3 w-3 text-gray-600" />
@@ -272,7 +272,7 @@ export default function MainSiteStatus() {
             <div className="text-[10px] text-gray-500">{metrics.platform} {metrics.arch}</div>
           </div>
 
-          <div className="border rounded p-2 border-gray-200">
+          <div className="admin-card-small border-gray-200">
             <div className="flex items-center justify-between mb-1">
               <div className="flex items-center space-x-1">
                 <Clock className="h-3 w-3 text-gray-600" />
@@ -288,11 +288,11 @@ export default function MainSiteStatus() {
 
       {/* Veritabanı Durumu */}
       {metrics && (
-        <div className="border rounded p-3 mb-3">
-          <div className="flex items-center justify-between mb-2">
+        <div className="admin-card">
+          <div className="admin-card-header">
             <div className="flex items-center space-x-1">
               <Server className="h-4 w-4 text-gray-700" />
-              <span className="text-sm font-medium text-gray-900">Veritabanı Durumu</span>
+              <span className="admin-card-title">Veritabanı Durumu</span>
             </div>
             {chip(
               metrics.database.status === 'connected' ? 'green' : 'red',
@@ -300,7 +300,7 @@ export default function MainSiteStatus() {
             )}
           </div>
           
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-sm">
+          <div className="admin-grid-3 text-sm">
             <div className="flex justify-between">
               <span className="text-gray-500 text-xs">Kullanıcılar:</span>
               <span className="font-medium text-sm">{metrics.database.userCount}</span>
@@ -319,11 +319,11 @@ export default function MainSiteStatus() {
 
       {/* Genel Sağlık */}
       {health && (
-        <div className="border rounded p-3 mb-3">
-          <div className="flex items-center justify-between mb-2">
+        <div className="admin-card">
+          <div className="admin-card-header">
             <div className="flex items-center space-x-1">
               <Server className="h-4 w-4 text-gray-700" />
-              <span className="text-sm font-medium text-gray-900">Ana Site Sağlığı</span>
+              <span className="admin-card-title">Ana Site Sağlığı</span>
             </div>
             {chip(
               health.score >= 80 ? 'green' : 
@@ -332,14 +332,14 @@ export default function MainSiteStatus() {
             )}
           </div>
           
-          <div className="text-sm text-gray-700 mb-2">
+          <div className="admin-text-sm mb-2">
             Sağlık Skoru: {health.score}/100
           </div>
           
           {health.issues.length > 0 && (
-            <div className="text-sm">
-              <div className="text-gray-500 mb-1 text-xs">Tespit Edilen Sorunlar:</div>
-              <ul className="list-disc list-inside text-[10px] text-gray-500 space-y-1">
+            <div className="admin-text-sm">
+              <div className="admin-text-xs mb-1">Tespit Edilen Sorunlar:</div>
+              <ul className="list-disc list-inside admin-text-xs space-y-1">
                 {health.issues.map((issue, i) => (
                   <li key={i}>{issue}</li>
                 ))}
@@ -350,7 +350,7 @@ export default function MainSiteStatus() {
       )}
 
       {/* Zaman damgası */}
-      <div className="text-[10px] text-gray-500">
+      <div className="admin-text-xs">
         Son güncelleme: {metrics ? new Date(metrics.lastUpdate).toLocaleString('tr-TR') : '-'}
       </div>
     </div>

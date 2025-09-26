@@ -11,7 +11,7 @@ export default function SistemPage() {
   const [activeTab, setActiveTab] = useState('sistem')
 
   return (
-    <div className="flex h-screen bg-gray-100 w-full">
+    <div className="admin-page-container">
       {/* Sidebar */}
       <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
 
@@ -21,8 +21,8 @@ export default function SistemPage() {
         <Header />
 
         {/* Ana İçerik */}
-        <main className="flex-1 p-4 w-full overflow-y-auto scroll-smooth">
-          <div className="max-w-7xl mx-auto space-y-3">
+        <main className="admin-main-content">
+          <div className="admin-content-wrapper">
             {/* Sistem Uyarıları */}
             <SystemAlerts className="flex justify-end" />
             

@@ -161,6 +161,8 @@ export default function KullaniciPage() {
           }
           break
           
+
+          
         default:
           alert('Geçersiz işlem!')
       }
@@ -199,13 +201,13 @@ export default function KullaniciPage() {
         <div className="admin-main-content">
           <Header />
           <main className="admin-content-wrapper">
-            <div className="admin-card">
+            <div className="bg-white rounded-lg shadow p-4">
               <div className="text-center">
                 <div className="text-red-600 text-xl mb-4">⚠️ Hata</div>
                 <p className="text-gray-600 mb-4">{error}</p>
                 <button 
                   onClick={fetchUsers}
-                  className="admin-btn admin-btn-primary"
+                  className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
                 >
                   Tekrar Dene
                 </button>
@@ -218,11 +220,11 @@ export default function KullaniciPage() {
   }
 
   return (
-    <div className="admin-page-container">
+    <div className="flex h-screen bg-white w-full">
       <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
-      <div className="admin-main-content">
+      <div className="admin-content-wrapper w-full overflow-y-auto scroll-smooth">
         <Header />
-        <div className="admin-content-wrapper">
+        <div className="max-w-7xl mx-auto space-y-3">
           {/* Senkronizasyon Mesajı */}
           {syncMessage && (
             <div className="mb-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
@@ -235,63 +237,63 @@ export default function KullaniciPage() {
 
           {/* Senkronizasyon Butonu */}
           <div className="mb-6 flex justify-between items-center">
-            <h1 className="admin-text-lg">Kullanıcılar</h1>
+            <h1 className="text-2xl font-bold text-gray-900">Kullanıcılar</h1>
             <button
               onClick={handleSyncUsers}
               disabled={syncing}
-              className={`admin-btn flex items-center space-x-1 ${
+              className={`flex items-center px-4 py-2 rounded-lg font-medium ${
                 syncing 
-                  ? 'admin-btn-secondary cursor-not-allowed' 
-                  : 'admin-btn-primary'
+                  ? 'bg-gray-400 text-white cursor-not-allowed' 
+                  : 'bg-blue-600 text-white hover:bg-blue-700'
               }`}
             >
-              <RefreshCw className={`h-3 w-3 ${syncing ? 'animate-spin' : ''}`} />
-              <span>{syncing ? 'Senkronize Ediliyor...' : 'Ana Siteden Senkronize Et'}</span>
+              <RefreshCw className={`h-4 w-4 mr-2 ${syncing ? 'animate-spin' : ''}`} />
+              {syncing ? 'Senkronize Ediliyor...' : 'Ana Siteden Senkronize Et'}
             </button>
           </div>
 
           {/* İstatistikler */}
           <div className="mb-3">
             <div className="admin-grid-4">
-              <div className="admin-card-small">
-                <div className="flex items-center space-x-1">
+              <div className="admin-card">
+                <div className="flex items-center">
                   <div className="p-2 bg-blue-100 rounded">
-                    <Users className="h-3 w-3 text-blue-600" />
+                    <Users className="h-4 w-4 text-blue-600" />
                   </div>
-                  <div>
+                  <div className="ml-3">
                     <p className="admin-text-xs">Toplam</p>
-                    <p className="admin-text-sm">{totalUsers}</p>
+                    <p className="admin-text-lg">{totalUsers}</p>
                   </div>
                 </div>
               </div>
-              <div className="admin-card-small">
-                <div className="flex items-center space-x-1">
+              <div className="admin-card">
+                <div className="flex items-center">
                   <div className="p-2 bg-green-100 rounded">
-                    <UserCheck className="h-3 w-3 text-green-600" />
+                    <UserCheck className="h-4 w-4 text-green-600" />
                   </div>
-                  <div>
+                  <div className="ml-3">
                     <p className="admin-text-xs">Aktif</p>
-                    <p className="admin-text-sm">{activeUsers}</p>
+                    <p className="admin-text-lg">{activeUsers}</p>
                   </div>
                 </div>
               </div>
-              <div className="admin-card-small">
-                <div className="flex items-center space-x-1">
+              <div className="admin-card">
+                <div className="flex items-center">
                   <div className="p-2 bg-red-100 rounded">
-                    <UserX className="h-3 w-3 text-red-600" />
+                    <UserX className="h-4 w-4 text-red-600" />
                   </div>
-                  <div>
+                  <div className="ml-3">
                     <p className="admin-text-xs">Pasif</p>
-                    <p className="admin-text-sm">{inactiveUsers}</p>
+                    <p className="admin-text-lg">{inactiveUsers}</p>
                   </div>
                 </div>
               </div>
-              <div className="admin-card-small">
-                <div className="flex items-center space-x-1">
+              <div className="admin-card">
+                <div className="flex items-center">
                   <div className="p-2 bg-gray-100 rounded">
-                    <Clock className="h-3 w-3 text-gray-600" />
+                    <Clock className="h-4 w-4 text-gray-600" />
                   </div>
-                  <div>
+                  <div className="ml-3">
                     <p className="admin-text-xs">Son güncelleme</p>
                     <p className="admin-text-sm">{lastUpdate}</p>
                   </div>
@@ -308,8 +310,8 @@ export default function KullaniciPage() {
               onBulkAction={handleBulkAction}
             />
           </div>
-        </div>
+        </main>
       </div>
     </div>
   )
-}
+} 
