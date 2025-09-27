@@ -1,5 +1,6 @@
 'use client'
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import Sidebar from '../components/layout/Sidebar'
 import Header from '../components/layout/Header'
 import ApiModal from '../components/settings/ApiModal'
@@ -13,6 +14,7 @@ import SeoModal from '../components/settings/SeoModal'
 
 export default function AyarlarPage() {
   const [activeTab, setActiveTab] = useState('ayarlar')
+  const router = useRouter()
   const [isApiModalOpen, setIsApiModalOpen] = useState(false)
   const [isCountryModalOpen, setIsCountryModalOpen] = useState(false)
   const [isSiteModalOpen, setIsSiteModalOpen] = useState(false)
@@ -29,6 +31,15 @@ export default function AyarlarPage() {
         <Header />
         <div className="admin-content-wrapper">
           <div className="admin-grid-3">
+              {/* Admin Yönetimi Butonu */}
+              <button
+                onClick={() => router.push('/ayarlar/admin-yonetimi')}
+                className="admin-card hover:bg-gray-50 transition-colors"
+              >
+                <h2 className="admin-card-title mb-2">Admin Yönetimi</h2>
+                <p className="admin-text-xs">Admin kullanıcıları ve yetki yönetimi</p>
+              </button>
+
               {/* Site Ayarları Butonu */}
               <button
                 onClick={() => setIsSiteModalOpen(true)}
