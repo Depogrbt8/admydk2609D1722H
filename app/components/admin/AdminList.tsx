@@ -2,13 +2,14 @@
 import { Edit, Trash2, Eye, EyeOff } from 'lucide-react'
 
 interface Admin {
-  id: number
+  id: string
   name: string
   email: string
   role: string
   status: 'active' | 'inactive'
   lastLogin: string
   createdAt: string
+  canDelete?: boolean
 }
 
 interface AdminListProps {
@@ -127,6 +128,7 @@ export default function AdminList({ admins, onEdit, onDelete, onToggleStatus }: 
                     onClick={() => onDelete(admin)}
                     className="text-red-600 hover:text-red-900"
                     title="Sil"
+                    disabled={!admin.canDelete}
                   >
                     <Trash2 className="h-4 w-4" />
                   </button>

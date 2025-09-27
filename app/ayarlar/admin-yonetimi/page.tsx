@@ -1,112 +1,120 @@
 'use client'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Sidebar from '../../components/layout/Sidebar'
 import Header from '../../components/layout/Header'
 import AdminList from '../../components/admin/AdminList'
 import AdminForm from '../../components/admin/AdminForm'
 import PermissionManager from '../../components/admin/PermissionManager'
 
+interface Admin {
+  id: string
+  name: string
+  email: string
+  role: string
+  status: 'active' | 'inactive'
+  lastLogin: string
+  createdAt: string
+  canDelete?: boolean
+}
+
 export default function AdminYonetimiPage() {
   const [activeTab, setActiveTab] = useState('ayarlar')
   const [activeAdminTab, setActiveAdminTab] = useState('liste')
   const [showEditModal, setShowEditModal] = useState(false)
-  const [editingAdmin, setEditingAdmin] = useState<any>(null)
+  const [editingAdmin, setEditingAdmin] = useState<Admin | null>(null)
+  const [admins, setAdmins] = useState<Admin[]>([])
+  const [isLoading, setIsLoading] = useState(true)
 
-  // Örnek admin verileri
-  const [admins, setAdmins] = useState([
-    {
-      id: 1,
-      name: 'Ahmet Yılmaz',
-      email: 'ahmet@gurbet.biz',
-      role: 'Super Admin',
-      status: 'active' as const,
-      lastLogin: '2 saat önce',
-      createdAt: '15.03.2024'
-    },
-    {
-      id: 2,
-      name: 'Fatma Demir',
-      email: 'fatma@gurbet.biz',
-      role: 'Admin',
-      status: 'active' as const,
-      lastLogin: '1 gün önce',
-      createdAt: '10.02.2024'
-    },
-    {
-      id: 3,
-      name: 'Mehmet Kaya',
-      email: 'mehmet@gurbet.biz',
-      role: 'Moderator',
-      status: 'inactive' as const,
-      lastLogin: '3 gün önce',
-      createdAt: '05.01.2024'
-    },
-    {
-      id: 4,
-      name: 'Ayşe Özkan',
-      email: 'ayse@gurbet.biz',
-      role: 'Satış',
-      status: 'active' as const,
-      lastLogin: '5 saat önce',
-      createdAt: '20.06.2024'
-    },
-    {
-      id: 5,
-      name: 'Can Yıldız',
-      email: 'can@gurbet.biz',
-      role: 'Temsilci',
-      status: 'active' as const,
-      lastLogin: '1 saat önce',
-      createdAt: '25.06.2024'
+  // Admin listesini API'den çek
+  const fetchAdmins = async () => {
+    try {
+      setIsLoading(true)
+      const response = await fetch('/api/admin')
+      const data = await response.json()
+      
+      if (data.success) {
+        setAdmins(data.admins)
+      } else {
+        console.error('Admin listesi çekme hatası:', data.error)
+      }
+    } catch (error) {
+      console.error('Admin listesi çekme hatası:', error)
+    } finally {
+      setIsLoading(false)
     }
-  ])
+  }
+
+  useEffect(() => {
+    fetchAdmins()
+  }, [])
 
   // Admin işlemleri
   const handleAddAdmin = (adminData: any) => {
-    const newAdmin = {
-      id: Math.max(...admins.map(a => a.id)) + 1,
-      name: `${adminData.firstName} ${adminData.lastName}`,
-      email: adminData.email,
-      role: adminData.role,
-      status: 'active' as const,
-      lastLogin: 'Henüz giriş yapmadı',
-      createdAt: new Date().toLocaleDateString('tr-TR')
-    }
-    setAdmins([...admins, newAdmin])
+    // Admin eklendikten sonra listeyi yenile
+    fetchAdmins()
     setActiveAdminTab('liste')
-    alert('Admin başarıyla eklendi!')
   }
 
-  const handleEditAdmin = (admin: any) => {
+  const handleEditAdmin = (admin: Admin) => {
     setEditingAdmin(admin)
     setShowEditModal(true)
   }
 
   const handleUpdateAdmin = (updatedAdmin: any) => {
-    setAdmins(admins.map(admin => 
-      admin.id === updatedAdmin.id 
-        ? { ...admin, ...updatedAdmin }
-        : admin
-    ))
+    // Admin güncellendikten sonra listeyi yenile
+    fetchAdmins()
     setShowEditModal(false)
     setEditingAdmin(null)
-    alert('Admin başarıyla güncellendi!')
   }
 
-  const handleDeleteAdmin = (admin: any) => {
+  const handleDeleteAdmin = async (admin: Admin) => {
     if (confirm(`${admin.name} adlı admini silmek istediğinizden emin misiniz?`)) {
-      setAdmins(admins.filter(a => a.id !== admin.id))
-      alert('Admin başarıyla silindi!')
+      try {
+        const response = await fetch(`/api/admin/${admin.id}`, {
+          method: 'DELETE'
+        })
+        
+        const data = await response.json()
+        
+        if (data.success) {
+          alert('Admin başarıyla silindi!')
+          fetchAdmins() // Listeyi yenile
+        } else {
+          alert(data.error || 'Silme işlemi başarısız!')
+        }
+      } catch (error) {
+        console.error('Admin silme hatası:', error)
+        alert('Bir hata oluştu. Lütfen tekrar deneyin.')
+      }
     }
   }
 
-  const handleToggleStatus = (admin: any) => {
-    setAdmins(admins.map(a => 
-      a.id === admin.id 
-        ? { ...a, status: a.status === 'active' ? 'inactive' : 'active' }
-        : a
-    ))
-    alert(`Admin durumu ${admin.status === 'active' ? 'pasif' : 'aktif'} yapıldı!`)
+  const handleToggleStatus = async (admin: Admin) => {
+    try {
+      const newStatus = admin.status === 'active' ? 'inactive' : 'active'
+      
+      const response = await fetch(`/api/admin/${admin.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          status: newStatus
+        }),
+      })
+      
+      const data = await response.json()
+      
+      if (data.success) {
+        alert(`Admin durumu ${newStatus === 'active' ? 'aktif' : 'pasif'} yapıldı!`)
+        fetchAdmins() // Listeyi yenile
+      } else {
+        alert(data.error || 'Durum değiştirme başarısız!')
+      }
+    } catch (error) {
+      console.error('Admin durum değiştirme hatası:', error)
+      alert('Bir hata oluştu. Lütfen tekrar deneyin.')
+    }
   }
 
   return (
@@ -162,15 +170,24 @@ export default function AdminYonetimiPage() {
               </nav>
             </div>
 
-            {/* Tab İçerikleri */}
-            {activeAdminTab === 'liste' && (
-              <AdminList 
-                admins={admins} 
-                onEdit={handleEditAdmin}
-                onDelete={handleDeleteAdmin}
-                onToggleStatus={handleToggleStatus}
-              />
-            )}
+                {/* Tab İçerikleri */}
+                {activeAdminTab === 'liste' && (
+                  <>
+                    {isLoading ? (
+                      <div className="flex items-center justify-center py-12">
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                        <span className="ml-2 text-gray-600">Admin listesi yükleniyor...</span>
+                      </div>
+                    ) : (
+                      <AdminList 
+                        admins={admins} 
+                        onEdit={handleEditAdmin}
+                        onDelete={handleDeleteAdmin}
+                        onToggleStatus={handleToggleStatus}
+                      />
+                    )}
+                  </>
+                )}
 
             {activeAdminTab === 'ekle' && (
               <AdminForm 

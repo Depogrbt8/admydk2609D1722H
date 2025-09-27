@@ -1,8 +1,8 @@
 {
-  "/page": "app/page.js",
   "/dashboard/page": "app/dashboard/page.js",
-  "/api/system/real-metrics/route": "app/api/system/real-metrics/route.js",
-  "/api/system/security/status/route": "app/api/system/security/status/route.js",
+  "/sistem/page": "app/sistem/page.js",
+  "/page": "app/page.js",
   "/api/system/health-score/route": "app/api/system/health-score/route.js",
-  "/sistem/page": "app/sistem/page.js"
+  "/api/system/real-metrics/route": "app/api/system/real-metrics/route.js",
+  "/api/system/security/status/route": "app/api/system/security/status/route.js"
 }

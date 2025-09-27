@@ -61,7 +61,7 @@ export default function AdminForm({ onSubmit, onCancel, editingAdmin, isEdit = f
     }
   })
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!isEdit && formData.password !== formData.confirmPassword) {
       alert('Şifreler eşleşmiyor!')
@@ -72,13 +72,62 @@ export default function AdminForm({ onSubmit, onCancel, editingAdmin, isEdit = f
       return
     }
     
-    const submitData = {
-      ...formData,
-      id: editingAdmin?.id,
-      name: `${formData.firstName} ${formData.lastName}`.trim()
+    try {
+      if (isEdit) {
+        // Admin güncelle
+        const response = await fetch(`/api/admin/${editingAdmin.id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            firstName: formData.firstName,
+            lastName: formData.lastName,
+            email: formData.email,
+            password: formData.password || undefined,
+            role: formData.role,
+            status: 'active'
+          }),
+        })
+
+        const data = await response.json()
+        
+        if (data.success) {
+          alert('Admin başarıyla güncellendi!')
+          onSubmit(data.admin)
+        } else {
+          alert(data.error || 'Güncelleme başarısız!')
+        }
+      } else {
+        // Yeni admin oluştur
+        const response = await fetch('/api/admin', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            firstName: formData.firstName,
+            lastName: formData.lastName,
+            email: formData.email,
+            password: formData.password,
+            role: formData.role,
+            permissions: formData.permissions
+          }),
+        })
+
+        const data = await response.json()
+        
+        if (data.success) {
+          alert('Admin başarıyla oluşturuldu!')
+          onSubmit(data.admin)
+        } else {
+          alert(data.error || 'Oluşturma başarısız!')
+        }
+      }
+    } catch (error) {
+      console.error('Admin işlemi hatası:', error)
+      alert('Bir hata oluştu. Lütfen tekrar deneyin.')
     }
-    
-    onSubmit(submitData)
   }
 
   const handlePermissionChange = (permission: string) => {
