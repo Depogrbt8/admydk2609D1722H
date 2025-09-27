@@ -26,13 +26,18 @@ export default function LoginPage() {
 
       const data = await response.json()
 
-      if (data.success) {
-        // Token'ı localStorage'a kaydet
-        localStorage.setItem('auth-token', data.token)
-        localStorage.setItem('user', JSON.stringify(data.user))
-        
-        // Dashboard'a yönlendir
-        window.location.href = '/dashboard'
+      if (data.success && data.token && data.user) {
+        // Token ve user bilgilerini kontrol et
+        if (data.user.role === 'admin') {
+          // Token'ı localStorage'a kaydet
+          localStorage.setItem('auth-token', data.token)
+          localStorage.setItem('user', JSON.stringify(data.user))
+          
+          // Dashboard'a yönlendir
+          window.location.href = '/dashboard'
+        } else {
+          setError('Admin yetkisi gerekli')
+        }
       } else {
         setError(data.error || 'Giriş başarısız')
       }

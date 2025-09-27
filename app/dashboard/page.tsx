@@ -1,12 +1,61 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { BarChart3, Users, Mail, CreditCard, Calendar, FileText, Settings, Search, Globe, Briefcase, BookOpen, Megaphone, Code } from 'lucide-react'
 import Sidebar from '../components/layout/Sidebar'
 import Header from '../components/layout/Header'
 
 export default function DashboardPage() {
   const [activeTab, setActiveTab] = useState('dashboard')
+  const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
+
+  useEffect(() => {
+    // Authentication kontrolü
+    const checkAuth = () => {
+      const token = localStorage.getItem('auth-token')
+      const user = localStorage.getItem('user')
+      
+      if (!token || !user) {
+        // Token veya user yoksa login sayfasına yönlendir
+        window.location.href = '/'
+        return
+      }
+
+      try {
+        const userData = JSON.parse(user)
+        if (userData.role !== 'admin') {
+          // Admin değilse login sayfasına yönlendir
+          window.location.href = '/'
+          return
+        }
+        
+        setIsAuthenticated(true)
+      } catch (error) {
+        console.error('User data parse hatası:', error)
+        window.location.href = '/'
+        return
+      }
+      
+      setIsLoading(false)
+    }
+
+    checkAuth()
+  }, [])
+
+  // Loading durumu
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+      </div>
+    )
+  }
+
+  // Authentication başarısız
+  if (!isAuthenticated) {
+    return null
+  }
 
   const stats = [
     { name: 'Toplam Kullanıcı', value: '12,847', icon: Users, color: 'blue' },
