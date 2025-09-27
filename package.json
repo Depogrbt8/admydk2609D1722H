@@ -18,9 +18,13 @@
     "prisma:migrate-reset": "node scripts/prisma-guard-advanced.js && prisma migrate reset",
     "prisma:seed": "node scripts/prisma-guard.js && prisma db seed",
     "backup:auto": "node scripts/auto-backup.js",
-    "backup:list": "node scripts/auto-backup.js list",
-    "backup:prisma": "node scripts/auto-backup.js prisma",
-    "guard:check": "node scripts/prisma-guard.js --check"
+    "backup:list": "ls -la backups/auto-backups/",
+    "backup:prisma": "node scripts/auto-backup.js --type=prisma",
+    "guard:check": "node scripts/prisma-guard.js --check",
+    "guard:schema": "node scripts/schema-guard.js",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage"
   },
   "dependencies": {
     "@prisma/client": "5.10.2",
@@ -51,6 +55,8 @@
     "zod": "4.0.5"
   },
   "devDependencies": {
+    "@testing-library/react": "^13.4.0",
+    "@testing-library/jest-dom": "^5.16.5",
     "@types/bcrypt": "6.0.0",
     "@types/node": "^20",
     "@types/react": "^18",
@@ -58,8 +64,10 @@
     "autoprefixer": "^10",
     "eslint": "^8",
     "eslint-config-next": "13.5.6",
+    "jest": "^29.5.0",
     "postcss": "^8",
     "tailwindcss": "^3",
+    "ts-jest": "^29.1.0",
     "typescript": "^5"
   }
 }

@@ -16,7 +16,7 @@ export default function LoginPage() {
     setError('')
     
     try {
-          const response = await fetch('/api/login', {
+          const response = await fetch('/api/auth/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -132,7 +132,7 @@ export default function LoginPage() {
           <div className="text-center text-xs text-gray-400 mt-4 p-2 bg-gray-50 rounded">
             <p><strong>Demo Giriş:</strong></p>
             <p>📧 admin@grbt8.store</p>
-            <p>🔑 Admin123!</p>
+            <p>🔑 GRBT8Admin2025!</p>
           </div>
         </form>
       </div>
